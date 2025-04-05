@@ -27,7 +27,7 @@ def get_file_content_as_string(path):
     
 @st.cache(show_spinner=False)
 def load_model():
-    model=tf.keras.models.load_model('mymodel.h5')
+    model=tf.keras.models.load_model('emotionrecognition.h5')
     
     return model
 def application():
