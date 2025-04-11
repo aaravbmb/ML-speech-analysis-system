@@ -3,7 +3,7 @@ from streamlit_option_menu import option_menu
 
 def sidebar_ui():
     with st.sidebar:
-        # Logo at the top
+        # Logo
         st.image("https://raw.githubusercontent.com/your-username/your-repo/main/logo.png", width=130)
 
         # App name
@@ -12,7 +12,7 @@ def sidebar_ui():
             unsafe_allow_html=True
         )
 
-        # Navigation buttons
+        # Navigation
         selected = option_menu(
             menu_title=None,
             options=["Analyze", "Project Details", "About Us"],
@@ -21,4 +21,6 @@ def sidebar_ui():
             default_index=0,
             orientation="vertical",
             styles={
-                "container
+                "container": {"padding": "0!important", "background-color": "#443C56"},
+                "icon": {"color": "white", "font-size": "16px"},
+                "
