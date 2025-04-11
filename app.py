@@ -1,8 +1,10 @@
 import streamlit as st
-import numpy as np    
+import numpy as np
 import tensorflow as tf
 import librosa
 from PIL import Image
+import wave
+from audiorecorder import audiorecorder
 
 # Load the model once
 @st.cache_resource(show_spinner=False)
@@ -29,21 +31,19 @@ def predict(model, wav_file):
 # Sidebar Styling & Navigation
 def sidebar_ui():
     st.sidebar.markdown(
-        "<style>"
-        ".sidebar-content { display: flex; flex-direction: column; align-items: center; }"
-        "</style>",
+        """
+        <style>
+        .sidebar-content { display: flex; flex-direction: column; align-items: center; }
+        .element-container:nth-child(1) img { display: block; margin-left: auto; margin-right: auto; }
+        .block-container { padding-top: 2rem; }
+        </style>
+        """,
         unsafe_allow_html=True
     )
 
-    # Sidebar Image
     st.sidebar.image("logo.png", width=130)
-
-    # Title
     st.sidebar.markdown("<h3 style='text-align: center;'>MoodMatrix: Speech<br>Analysis System</h3>", unsafe_allow_html=True)
-
-    # Navigation Tabs
     page = st.sidebar.radio("", ["Analyze", "Project Details", "About Us"], index=0)
-
     st.sidebar.markdown("---")
 
     # Footer Icons
@@ -58,27 +58,38 @@ def sidebar_ui():
 # Pages
 def analyze_page():
     model = load_model()
-    st.subheader("Upload an Audio File")
-    uploaded_file = st.file_uploader("Choose a WAV file", type="wav")
-    if uploaded_file:
-        st.audio(uploaded_file, format='audio/wav')
-        emotion = predict(model, uploaded_file)
-        st.success(f"Detected Emotion: **{emotion}**")
+    st.subheader("🎤 Record Your Voice")
+
+    audio = audiorecorder("Click to record", "Recording...")
+
+    if len(audio) > 0:
+        st.audio(audio.tobytes(), format="audio/wav")
+
+        with wave.open("recorded_audio.wav", "wb") as f:
+            f.setnchannels(1)
+            f.setsampwidth(2)
+            f.setframerate(44100)
+            f.writeframes(audio.tobytes())
+
+        with st.spinner("Analyzing emotion..."):
+            emotion = predict(model, "recorded_audio.wav")
+            st.success(f"Detected Emotion: **{emotion}**")
+
 
 def project_details_page():
     st.subheader("Project Details")
     st.markdown("""
     This project uses deep learning (LSTM) to classify emotions from speech based on MFCC audio features.
-    
+
     **Technologies:**
     - TensorFlow/Keras
     - Librosa for audio processing
     - Streamlit for UI
-    
+
     **Model Input:**
     - `.wav` files
     - Extracted MFCCs (40 coefficients)
-    
+
     **Emotions Covered:**
     Neutral, Calm, Happy, Sad, Angry, Fearful, Disgust, Surprised
     """)
@@ -87,7 +98,7 @@ def about_us_page():
     st.subheader("About Us")
     st.markdown("""
     We are a team of passionate engineers building AI tools for real-world applications.
-    
+
     **Contact:** moodmatrix@example.com  
     **GitHub:** [github.com/moodmatrix](https://github.com)  
     """)
