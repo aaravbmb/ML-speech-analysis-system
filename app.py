@@ -1,91 +1,90 @@
 import streamlit as st
-from streamlit_option_menu import option_menu
+import numpy as np
+import tensorflow as tf
+import urllib.request
+import soundfile as sf
+import librosa
 
-# Page config
-st.set_page_config(page_title="MoodMatrix", layout="wide")
+# Cached GitHub source code loader
+@st.cache_data(show_spinner=False)
+def get_file_content_as_string(path):
+    url = 'https://raw.githubusercontent.com/chiluveri-sanjay/Emotion-recognition/main/' + path
+    response = urllib.request.urlopen(url)
+    return response.read().decode("utf-8")
 
-# Sidebar UI
-def sidebar_ui():
-    with st.sidebar:
-        # Logo from GitHub (replace with your actual username/repo)
-        st.image("https://raw.githubusercontent.com/your-username/your-repo/main/logo.png", width=130)
+# Cached model loader
+@st.cache_resource(show_spinner=False)
+def load_model():
+    model = tf.keras.models.load_model('emotionrecognition.h5')
+    return model
 
-        # App name
-        st.markdown(
-            "<h3 style='text-align: center; color: white;'>MoodMatrix:<br>Speech Analysis System</h3>",
-            unsafe_allow_html=True
-        )
+# Extract MFCC features from audio file
+def extract_mfcc(wav_file):
+    y, sr = sf.read(wav_file)
+    mfccs = np.mean(librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40).T, axis=0)
+    return mfccs
 
-        # Navigation menu
-        selected = option_menu(
-            menu_title=None,
-            options=["Analyze", "Project Details", "About Us"],
-            icons=["mic", "book", "info-circle"],
-            menu_icon=None,
-            default_index=0,
-            orientation="vertical",
-            styles={
-                "container": {
-                    "padding": "0!important",
-                    "background-color": "#443C56"
-                },
-                "icon": {
-                    "color": "white",
-                    "font-size": "16px"
-                },
-                "nav-link": {
-                    "font-size": "16px",
-                    "text-align": "center",
-                    "margin": "10px 0",
-                    "color": "white",
-                    "border-radius": "12px"
-                },
-                "nav-link-selected": {
-                    "background-color": "#5A526C",
-                    "font-weight": "bold",
-                    "color": "white"
-                },
-            }
-        )
+# Predict emotion from audio
+def predict(model, wav_file):
+    emotions = {
+        1: 'neutral', 2: 'calm', 3: 'happy', 4: 'sad',
+        5: 'angry', 6: 'fearful', 7: 'disgust', 8: 'surprised'
+    }
+    test_point = extract_mfcc(wav_file)
+    test_point = np.reshape(test_point, newshape=(1, 40, 1))
+    predictions = model.predict(test_point)
+    predicted_emotion = emotions[np.argmax(predictions[0]) + 1]
+    return predicted_emotion
 
-        # Spacer to push icons to bottom
-        st.markdown("<div style='height:150px;'></div>", unsafe_allow_html=True)
+# Emotion Recognition App
+def emotion_recognition_app():
+    st.header("🎙️ Speech Emotion Recognition")
+    with st.spinner('Loading model...'):
+        model = load_model()
+    st.success('Model loaded successfully!')
 
-        # Footer icons
-        st.markdown(
-            """
-            <div style='display: flex; justify-content: center; gap: 30px;'>
-                <a href='https://github.com/your-username/your-repo' target='_blank'>
-                    <img src='https://img.icons8.com/ios-filled/50/ffffff/github.png' width='30'/>
-                </a>
-                <a href='https://your-external-link.com' target='_blank'>
-                    <img src='https://img.icons8.com/ios-filled/50/ffffff/external-link.png' width='30'/>
-                </a>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    file_to_be_uploaded = st.file_uploader("Choose a .wav audio file", type="wav")
 
-        return selected
+    if file_to_be_uploaded:
+        st.audio(file_to_be_uploaded, format='audio/wav')
+        with st.spinner('Analyzing emotion...'):
+            emotion = predict(model, file_to_be_uploaded)
+        st.success(f'Emotion of the audio is **{emotion}** 🎧')
 
-# Main UI Logic
+# About Page
+def about_page():
+    st.header("📚 About the Project")
+    st.markdown("""
+    This project is a **Speech Emotion Recognition System** built using deep learning.  
+    It uses **MFCC (Mel-frequency cepstral coefficients)** features extracted from `.wav` audio files  
+    and classifies emotions like *happy, sad, angry, neutral*, etc.  
+      
+    **Technologies used**:
+    - TensorFlow / Keras for the LSTM model
+    - Librosa for feature extraction
+    - Streamlit for web deployment
+    """)
+
+# Team Page
+def team_page():
+    st.header("👨‍💻 Meet the Team")
+    st.markdown("""
+    - **Aarav Bamba** — Product Analyst & Developer  
+    - **OpenAI GPT-4** — Assistant and Copilot  
+    - Special thanks to [Chiluveri Sanjay](https://github.com/chiluveri-sanjay) for the base repo.  
+    """)
+
+# Main App Navigation
 def main():
-    page = sidebar_ui()
+    st.sidebar.title("🔍 Navigation")
+    page = st.sidebar.radio("Go to", ["Emotion Recognition", "About the Project", "Meet the Team"])
 
-    if page == "Analyze":
-        st.title("🔍 Analyze Speech Emotion")
-        st.write("Upload an audio file or record your voice for emotion analysis.")
-        # Add your recording/upload logic here
-
-    elif page == "Project Details":
-        st.title("📘 Project Details")
-        st.write("This section contains information about the MoodMatrix project.")
-        # Add project details content
-
-    elif page == "About Us":
-        st.title("👤 About Us")
-        st.write("Meet the team behind MoodMatrix.")
-        # Add team or author info
+    if page == "Emotion Recognition":
+        emotion_recognition_app()
+    elif page == "About the Project":
+        about_page()
+    elif page == "Meet the Team":
+        team_page()
 
 if __name__ == "__main__":
     main()
