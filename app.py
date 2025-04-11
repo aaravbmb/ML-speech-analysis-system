@@ -36,7 +36,7 @@ def sidebar_ui():
     )
 
     # Sidebar Image
-    st.sidebar.image("image.png", width=130)
+    st.sidebar.image("logo.png", width=130)
 
     # Title
     st.sidebar.markdown("<h3 style='text-align: center;'>MoodMatrix: Speech<br>Analysis System</h3>", unsafe_allow_html=True)
