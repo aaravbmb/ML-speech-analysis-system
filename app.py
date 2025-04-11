@@ -5,6 +5,7 @@ import librosa
 from PIL import Image
 import wave
 from audiorecorder import audiorecorder
+from io import BytesIO
 
 # Load the model once
 @st.cache_resource(show_spinner=False)
@@ -63,7 +64,9 @@ def analyze_page():
     audio = audiorecorder("Click to record", "Recording...")
 
     if len(audio) > 0:
-        st.audio(audio.tobytes(), format="audio/wav")
+        buffer = BytesIO()
+        audio.export(buffer, format="wav")
+        st.audio(buffer.getvalue(), format="audio/wav")
 
         with wave.open("recorded_audio.wav", "wb") as f:
             f.setnchannels(1)
