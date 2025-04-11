@@ -5,13 +5,6 @@ import urllib.request
 import soundfile as sf
 import librosa
 
-# Cached GitHub source code loader
-@st.cache_data(show_spinner=False)
-def get_file_content_as_string(path):
-    url = 'https://raw.githubusercontent.com/chiluveri-sanjay/Emotion-recognition/main/' + path
-    response = urllib.request.urlopen(url)
-    return response.read().decode("utf-8")
-
 # Cached model loader
 @st.cache_resource(show_spinner=False)
 def load_model():
