@@ -68,11 +68,7 @@ def analyze_page():
         audio.export(buffer, format="wav")
         st.audio(buffer.getvalue(), format="audio/wav")
 
-        with wave.open("recorded_audio.wav", "wb") as f:
-            f.setnchannels(1)
-            f.setsampwidth(2)
-            f.setframerate(44100)
-            f.writeframes(audio.tobytes())
+        audio.export("recorded_audio.wav", format="wav")
 
         with st.spinner("Analyzing emotion..."):
             emotion = predict(model, "recorded_audio.wav")
