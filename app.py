@@ -1,26 +1,17 @@
 import streamlit as st
-import numpy as np
+import numpy as np    
 import tensorflow as tf
-import urllib.request
-import soundfile as sf
 import librosa
+from PIL import Image
 
-# Cached GitHub source code loader
-@st.cache_data(show_spinner=False)
-def get_file_content_as_string(path):
-    url = 'https://raw.githubusercontent.com/chiluveri-sanjay/Emotion-recognition/main/' + path
-    response = urllib.request.urlopen(url)
-    return response.read().decode("utf-8")
-
-# Cached model loader
+# Load the model once
 @st.cache_resource(show_spinner=False)
 def load_model():
-    model = tf.keras.models.load_model('emotionrecognition.h5')
-    return model
+    return tf.keras.models.load_model('emotionrecognition.h5')
 
-# Extract MFCC features from audio file
+# Extract MFCC features
 def extract_mfcc(wav_file):
-    y, sr = sf.read(wav_file)
+    y, sr = librosa.load(wav_file)
     mfccs = np.mean(librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40).T, axis=0)
     return mfccs
 
@@ -30,61 +21,88 @@ def predict(model, wav_file):
         1: 'neutral', 2: 'calm', 3: 'happy', 4: 'sad',
         5: 'angry', 6: 'fearful', 7: 'disgust', 8: 'surprised'
     }
-    test_point = extract_mfcc(wav_file)
-    test_point = np.reshape(test_point, newshape=(1, 40, 1))
-    predictions = model.predict(test_point)
-    predicted_emotion = emotions[np.argmax(predictions[0]) + 1]
-    return predicted_emotion
+    mfcc = extract_mfcc(wav_file)
+    mfcc = np.reshape(mfcc, (1, 40, 1))
+    predictions = model.predict(mfcc)
+    return emotions[np.argmax(predictions[0]) + 1]
 
-# Emotion Recognition App
-def emotion_recognition_app():
-    st.header("🎙️ Speech Emotion Recognition")
-    with st.spinner('Loading model...'):
-        model = load_model()
-    st.success('Model loaded successfully!')
+# Sidebar Styling & Navigation
+def sidebar_ui():
+    st.sidebar.markdown(
+        "<style>"
+        ".sidebar-content { display: flex; flex-direction: column; align-items: center; }"
+        "</style>",
+        unsafe_allow_html=True
+    )
 
-    file_to_be_uploaded = st.file_uploader("Choose a .wav audio file", type="wav")
+    # Sidebar Image
+    st.sidebar.image("logo.png", width=130)
 
-    if file_to_be_uploaded:
-        st.audio(file_to_be_uploaded, format='audio/wav')
-        with st.spinner('Analyzing emotion...'):
-            emotion = predict(model, file_to_be_uploaded)
-        st.success(f'Emotion of the audio is **{emotion}** 🎧')
+    # Title
+    st.sidebar.markdown("<h3 style='text-align: center;'>MoodMatrix: Speech<br>Analysis System</h3>", unsafe_allow_html=True)
 
-# About Page
-def about_page():
-    st.header("📚 About the Project")
+    # Navigation Tabs
+    page = st.sidebar.radio("", ["Analyze", "Project Details", "About Us"], index=0)
+
+    st.sidebar.markdown("---")
+
+    # Footer Icons
+    col1, col2 = st.sidebar.columns(2)
+    with col1:
+        st.markdown("[![GitHub](https://img.icons8.com/ios-filled/25/ffffff/github.png)](https://github.com)", unsafe_allow_html=True)
+    with col2:
+        st.markdown("[![External](https://img.icons8.com/ios-glyphs/25/ffffff/external-link.png)](https://yourprojectlink.com)", unsafe_allow_html=True)
+
+    return page
+
+# Pages
+def analyze_page():
+    model = load_model()
+    st.subheader("Upload an Audio File")
+    uploaded_file = st.file_uploader("Choose a WAV file", type="wav")
+    if uploaded_file:
+        st.audio(uploaded_file, format='audio/wav')
+        emotion = predict(model, uploaded_file)
+        st.success(f"Detected Emotion: **{emotion}**")
+
+def project_details_page():
+    st.subheader("Project Details")
     st.markdown("""
-    This project is a **Speech Emotion Recognition System** built using deep learning.  
-    It uses **MFCC (Mel-frequency cepstral coefficients)** features extracted from `.wav` audio files  
-    and classifies emotions like *happy, sad, angry, neutral*, etc.  
-      
-    **Technologies used**:
-    - TensorFlow / Keras for the LSTM model
-    - Librosa for feature extraction
-    - Streamlit for web deployment
+    This project uses deep learning (LSTM) to classify emotions from speech based on MFCC audio features.
+    
+    **Technologies:**
+    - TensorFlow/Keras
+    - Librosa for audio processing
+    - Streamlit for UI
+    
+    **Model Input:**
+    - `.wav` files
+    - Extracted MFCCs (40 coefficients)
+    
+    **Emotions Covered:**
+    Neutral, Calm, Happy, Sad, Angry, Fearful, Disgust, Surprised
     """)
 
-# Team Page
-def team_page():
-    st.header("👨‍💻 Meet the Team")
+def about_us_page():
+    st.subheader("About Us")
     st.markdown("""
-    - **Aarav Bamba** — Product Analyst & Developer  
-    - **OpenAI GPT-4** — Assistant and Copilot  
-    - Special thanks to [Chiluveri Sanjay](https://github.com/chiluveri-sanjay) for the base repo.  
+    We are a team of passionate engineers building AI tools for real-world applications.
+    
+    **Contact:** moodmatrix@example.com  
+    **GitHub:** [github.com/moodmatrix](https://github.com)  
     """)
 
-# Main App Navigation
+# Main App
 def main():
-    st.sidebar.title("🔍 Navigation")
-    page = st.sidebar.radio("Go to", ["Emotion Recognition", "About the Project", "Meet the Team"])
+    st.set_page_config(page_title="MoodMatrix", page_icon="🎙️", layout="centered")
+    page = sidebar_ui()
 
-    if page == "Emotion Recognition":
-        emotion_recognition_app()
-    elif page == "About the Project":
-        about_page()
-    elif page == "Meet the Team":
-        team_page()
+    if page == "Analyze":
+        analyze_page()
+    elif page == "Project Details":
+        project_details_page()
+    elif page == "About Us":
+        about_us_page()
 
 if __name__ == "__main__":
     main()
