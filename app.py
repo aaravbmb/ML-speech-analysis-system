@@ -112,13 +112,6 @@ def analyze_page():
 
                 st.session_state.history.append((emoji_map[emotion], emotion))
 
-    st.markdown("#### 📜 Previous Results")
-    for emoji, emo in st.session_state.history[::-1]:
-        st.write(f"{emoji} {emo.capitalize()}")
-
-
-
-
 
 def project_details_page():
     st.subheader("Project Details")
