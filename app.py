@@ -105,6 +105,18 @@ def about_us_page():
 # Main App
 def main():
     st.set_page_config(page_title="MoodMatrix", page_icon="🎙️", layout="centered")
+    
+    st.markdown(
+        """
+        <style>
+        .block-container {
+            padding-top: 4rem !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
     page = sidebar_ui()
 
     if page == "Analyze":
@@ -114,5 +126,3 @@ def main():
     elif page == "About Us":
         about_us_page()
 
-if __name__ == "__main__":
-    main()
