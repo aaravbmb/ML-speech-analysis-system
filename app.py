@@ -59,7 +59,7 @@ def sidebar_ui():
 # Pages
 def analyze_page():
     model = load_model()
-    st.subheader("🎤 Record Your Voice")
+    st.subheader("🎤Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
 
     audio = audiorecorder("Click to record", "Recording...")
 
