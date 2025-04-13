@@ -29,7 +29,6 @@ def extract_mfcc(wav_file, target_duration=3):
     return mfccs
 
 # Predict emotion from audio
-
 def predict(model, wav_file):
     emotions = {
         0: 'neutral', 1: 'calm', 2: 'happy', 3: 'sad',
@@ -42,9 +41,7 @@ def predict(model, wav_file):
 
     predicted_index = np.argmax(predictions[0])
     predicted_emotion = emotions[predicted_index]
-    confidence_scores = predictions[0]
-
-    return predicted_emotion, confidence_scores
+    return predicted_emotion
 
 # Sidebar Styling & Navigation
 def sidebar_ui():
@@ -84,9 +81,6 @@ def analyze_page():
         'angry': '😡', 'fearful': '😨', 'disgust': '🤢', 'surprised': '😲'
     }
 
-    if 'history' not in st.session_state:
-        st.session_state.history = []
-
     col1, col2 = st.columns(2)
 
     with col1:
@@ -101,12 +95,8 @@ def analyze_page():
             audio.export("recorded_audio.wav", format="wav")
 
             with st.spinner("Analyzing emotion..."):
-                emotion, scores = predict(model, "recorded_audio.wav")
+                emotion = predict(model, "recorded_audio.wav")
                 st.success(f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}")
-
-                st.bar_chart(scores)
-
-                st.session_state.history.append((emoji_map[emotion], emotion))
 
     with col2:
         st.markdown("#### 📁 Upload Audio File")
@@ -116,13 +106,8 @@ def analyze_page():
             st.audio(uploaded_file, format="audio/wav")
 
             with st.spinner("Analyzing emotion..."):
-                emotion, scores = predict(model, uploaded_file)
+                emotion = predict(model, uploaded_file)
                 st.success(f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}")
-
-                st.bar_chart(scores)
-
-                st.session_state.history.append((emoji_map[emotion], emotion))
-
 
 def project_details_page():
     st.subheader("Project Details")
@@ -177,4 +162,3 @@ def main():
 
 if __name__ == "__main__":
      main()
-
