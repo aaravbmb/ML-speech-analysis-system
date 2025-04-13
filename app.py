@@ -64,8 +64,6 @@ def sidebar_ui():
     return page
 
 # Pages
-import pandas as pd
-
 def analyze_page():
     model = load_model()
     st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
@@ -91,13 +89,12 @@ def analyze_page():
 
             audio.export("recorded_audio.wav", format="wav")
 
-            # Preprocess the recorded audio
-            processed_audio, sr = preprocess_audio("recorded_audio.wav")
-
             with st.spinner("Analyzing emotion..."):
-                emotion, scores = predict(model, processed_audio)
+                emotion, scores = predict(model, "recorded_audio.wav")
                 st.success(f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}")
+
                 st.bar_chart(scores)
+
                 st.session_state.history.append((emoji_map[emotion], emotion))
 
     with col2:
@@ -107,29 +104,13 @@ def analyze_page():
         if uploaded_file is not None:
             st.audio(uploaded_file, format="audio/wav")
 
-            # Save uploaded file to disk for processing
-            with open("uploaded_audio.wav", "wb") as f:
-                f.write(uploaded_file.getbuffer())
-
-            # Preprocess the uploaded audio
-            processed_audio, sr = preprocess_audio("uploaded_audio.wav")
-
             with st.spinner("Analyzing emotion..."):
-                emotion, scores = predict(model, processed_audio)
+                emotion, scores = predict(model, uploaded_file)
                 st.success(f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}")
+
                 st.bar_chart(scores)
+
                 st.session_state.history.append((emoji_map[emotion], emotion))
-
-    # Display the history as a table
-    st.markdown("#### 📜 Previous Results")
-
-    if st.session_state.history:
-        # Create a DataFrame to display the history as a table
-        history_df = pd.DataFrame(st.session_state.history, columns=["Emoji", "Emotion"])
-        st.table(history_df)
-
-
-
 def project_details_page():
     st.subheader("Project Details")
     st.markdown("""
