@@ -57,15 +57,15 @@ def sidebar_ui():
     return page
 
 # Pages
-
 def analyze_page():
     model = load_model()
-    st.subheader("🎤Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
+    st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        audio = audiorecorder("Click to record", "Recording...")
+        st.markdown("#### 🎙️ Record Audio")
+        audio = audiorecorder("Click to Record", "Recording...")
 
         if len(audio) > 0:
             buffer = BytesIO()
@@ -76,17 +76,19 @@ def analyze_page():
 
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, "recorded_audio.wav")
-                st.success(f"Detected Emotion: **{emotion}**")
+                st.success(f"**Detected Emotion:** {emotion}")
 
     with col2:
-        uploaded_file = st.file_uploader("Upload an audio file", type=["wav"])
+        st.markdown("#### 📁 Upload Audio File")
+        uploaded_file = st.file_uploader("Choose a .wav file", type=["wav"])
 
         if uploaded_file is not None:
             st.audio(uploaded_file, format="audio/wav")
 
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, uploaded_file)
-                st.success(f"Detected Emotion: **{emotion}**")
+                st.success(f"**Detected Emotion:** {emotion}")
+
 
 
 
