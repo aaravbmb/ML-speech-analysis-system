@@ -89,12 +89,13 @@ def analyze_page():
 
             audio.export("recorded_audio.wav", format="wav")
 
+            # Preprocess the recorded audio
+            processed_audio, sr = preprocess_audio("recorded_audio.wav")
+
             with st.spinner("Analyzing emotion..."):
-                emotion, scores = predict(model, "recorded_audio.wav")
+                emotion, scores = predict(model, processed_audio)
                 st.success(f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}")
-
                 st.bar_chart(scores)
-
                 st.session_state.history.append((emoji_map[emotion], emotion))
 
     with col2:
@@ -103,14 +104,21 @@ def analyze_page():
 
         if uploaded_file is not None:
             st.audio(uploaded_file, format="audio/wav")
+            with open("uploaded_audio.wav", "wb") as f:
+                f.write(uploaded_file.getbuffer())
+
+            # Preprocess the uploaded audio
+            processed_audio, sr = preprocess_audio("uploaded_audio.wav")
 
             with st.spinner("Analyzing emotion..."):
-                emotion, scores = predict(model, uploaded_file)
+                emotion, scores = predict(model, processed_audio)
                 st.success(f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}")
-
                 st.bar_chart(scores)
-
                 st.session_state.history.append((emoji_map[emotion], emotion))
+
+    st.markdown("#### 📜 Previous Results")
+    for emoji, emo in st.session_state.history[::-1]:
+        st.write(f"{emoji} {emo.capitalize()}")
 
 
 def project_details_page():
