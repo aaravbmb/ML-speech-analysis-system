@@ -19,15 +19,22 @@ def extract_mfcc(wav_file):
     return mfccs
 
 # Predict emotion from audio
+
 def predict(model, wav_file):
     emotions = {
-        1: 'neutral', 2: 'calm', 3: 'happy', 4: 'sad',
-        5: 'angry', 6: 'fearful', 7: 'disgust', 8: 'surprised'
+        0: 'neutral', 1: 'calm', 2: 'happy', 3: 'sad',
+        4: 'angry', 5: 'fearful', 6: 'disgust', 7: 'surprised'
     }
+
     mfcc = extract_mfcc(wav_file)
     mfcc = np.reshape(mfcc, (1, 40, 1))
     predictions = model.predict(mfcc)
-    return emotions[np.argmax(predictions[0]) + 1]
+
+    predicted_index = np.argmax(predictions[0])
+    predicted_emotion = emotions[predicted_index]
+    confidence_scores = predictions[0]
+
+    return predicted_emotion, confidence_scores
 
 # Sidebar Styling & Navigation
 def sidebar_ui():
@@ -61,6 +68,14 @@ def analyze_page():
     model = load_model()
     st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
 
+    emoji_map = {
+        'neutral': '😐', 'calm': '😌', 'happy': '😄', 'sad': '😢',
+        'angry': '😡', 'fearful': '😨', 'disgust': '🤢', 'surprised': '😲'
+    }
+
+    if 'history' not in st.session_state:
+        st.session_state.history = []
+
     col1, col2 = st.columns(2)
 
     with col1:
@@ -75,8 +90,12 @@ def analyze_page():
             audio.export("recorded_audio.wav", format="wav")
 
             with st.spinner("Analyzing emotion..."):
-                emotion = predict(model, "recorded_audio.wav")
-                st.success(f"**Detected Emotion:** {emotion}")
+                emotion, scores = predict(model, "recorded_audio.wav")
+                st.success(f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}")
+
+                st.bar_chart(scores)
+
+                st.session_state.history.append((emoji_map[emotion], emotion))
 
     with col2:
         st.markdown("#### 📁 Upload Audio File")
@@ -86,8 +105,17 @@ def analyze_page():
             st.audio(uploaded_file, format="audio/wav")
 
             with st.spinner("Analyzing emotion..."):
-                emotion = predict(model, uploaded_file)
-                st.success(f"**Detected Emotion:** {emotion}")
+                emotion, scores = predict(model, uploaded_file)
+                st.success(f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}")
+
+                st.bar_chart(scores)
+
+                st.session_state.history.append((emoji_map[emotion], emotion))
+
+    st.markdown("#### 📜 Previous Results")
+    for emoji, emo in st.session_state.history[::-1]:
+        st.write(f"{emoji} {emo.capitalize()}")
+
 
 
 
