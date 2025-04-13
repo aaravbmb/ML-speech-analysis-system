@@ -126,3 +126,6 @@ def main():
     elif page == "About Us":
         about_us_page()
 
+if __name__ == "__main__":
+     main()
+
