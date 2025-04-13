@@ -64,6 +64,8 @@ def sidebar_ui():
     return page
 
 # Pages
+import pandas as pd
+
 def analyze_page():
     model = load_model()
     st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
@@ -104,14 +106,13 @@ def analyze_page():
 
         if uploaded_file is not None:
             st.audio(uploaded_file, format="audio/wav")
-            
-            # Write uploaded audio to a temporary file
-            temp_file_path = "uploaded_audio.wav"
-            with open(temp_file_path, "wb") as f:
+
+            # Save uploaded file to disk for processing
+            with open("uploaded_audio.wav", "wb") as f:
                 f.write(uploaded_file.getbuffer())
 
             # Preprocess the uploaded audio
-            processed_audio, sr = preprocess_audio(temp_file_path)
+            processed_audio, sr = preprocess_audio("uploaded_audio.wav")
 
             with st.spinner("Analyzing emotion..."):
                 emotion, scores = predict(model, processed_audio)
@@ -119,9 +120,13 @@ def analyze_page():
                 st.bar_chart(scores)
                 st.session_state.history.append((emoji_map[emotion], emotion))
 
+    # Display the history as a table
     st.markdown("#### 📜 Previous Results")
-    for emoji, emo in st.session_state.history[::-1]:
-        st.write(f"{emoji} {emo.capitalize()}")
+
+    if st.session_state.history:
+        # Create a DataFrame to display the history as a table
+        history_df = pd.DataFrame(st.session_state.history, columns=["Emoji", "Emotion"])
+        st.table(history_df)
 
 
 
