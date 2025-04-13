@@ -13,8 +13,18 @@ def load_model():
     return tf.keras.models.load_model('emotionrecognition.h5')
 
 # Extract MFCC features
-def extract_mfcc(wav_file):
+def extract_mfcc(wav_file, target_duration=3):
     y, sr = librosa.load(wav_file)
+    
+    # Ensure the audio is 3 seconds long
+    target_samples = target_duration * sr
+    
+    if len(y) > target_samples:
+        y = y[:target_samples]  # Truncate if audio is longer than 3 seconds
+    elif len(y) < target_samples:
+        y = np.pad(y, (0, target_samples - len(y)))  # Pad if audio is shorter than 3 seconds
+    
+    # Extract MFCC features
     mfccs = np.mean(librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40).T, axis=0)
     return mfccs
 
@@ -64,6 +74,7 @@ def sidebar_ui():
     return page
 
 # Pages
+# Modify the analyze_page() function to handle file upload properly
 def analyze_page():
     model = load_model()
     st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
@@ -111,6 +122,8 @@ def analyze_page():
                 st.bar_chart(scores)
 
                 st.session_state.history.append((emoji_map[emotion], emotion))
+
+
 def project_details_page():
     st.subheader("Project Details")
     st.markdown("""
