@@ -48,55 +48,77 @@ def sidebar_ui():
     st.sidebar.markdown(
         """
         <style>
-        /* Make the sidebar a flex column */
+        /* Sidebar overall layout */
         section[data-testid="stSidebar"] > div:first-child {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             height: 100vh;
+            padding-top: 1.5rem;
         }
 
-        /* Center the logo and heading */
+        /* Center the logo */
         .element-container:nth-child(1) img {
             display: block;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .block-container {
-            padding-top: 2rem;
-        }
-
-        /* Center footer icon */
-        .sidebar-footer {
+        /* Title one-liner */
+        .sidebar-title {
             text-align: center;
-            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 25px;
         }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
 
-    st.sidebar.image("logo.png", width=130)
-    st.sidebar.markdown("<h3 style='text-align: center;'>MoodMatrix: Speech<br>Analysis System</h3>", unsafe_allow_html=True)
+        /* Style radio buttons as tabs */
+        div[data-baseweb="radio"] > div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
 
-    # Main Navigation
-    page = st.sidebar.radio("", ["Analyze", "Project Details", "About Us"], index=0)
-    st.sidebar.markdown("---")
+        div[data-baseweb="radio"] label {
+            background-color: #f0f2f6;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+            color: #333;
+            font-weight: 500;
+        }
 
-    # Footer Icons - centered
-    st.sidebar.markdown(
-        """
-        <div class="sidebar-footer">
-            <a href="https://yourprojectlink.com" target="_blank">
-                <img src="https://img.icons8.com/ios-glyphs/25/ffffff/external-link.png"/>
-            </a>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        div[data-baseweb="radio"] label:hover {
+            background-color: #d4d8e0;
+        }
 
-    return page
+        div[data-baseweb="radio"] input:checked + div {
+            background-color: #4a90e2 !important;
+            color: white !important;
+        }
+
+        /* Footer icon button */
+        .sidebar-footer {
+            margin-top: auto;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .circle-icon {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: #4a90e2;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
 
 # Pages
 # Modify the analyze_page() function to handle file upload properly
