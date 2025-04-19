@@ -197,6 +197,10 @@ def analyze_page():
 
     col1, col2 = st.columns(2)
 
+    wordcloud = None  # Initialize wordcloud variable
+    detected_emotion = ""
+
+    # Handle Audio Recording in col1
     with col1:
         st.markdown("#### 🎙️ Record Audio")
         audio = audiorecorder("Click to Record", "Recording...")
@@ -218,6 +222,7 @@ def analyze_page():
                 emotion = predict(model, "recorded_audio.wav")
                 detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
+    # Handle File Upload in col2
     with col2:
         st.markdown("#### 📁 Upload Audio File")
         uploaded_file = st.file_uploader("Choose a .wav file", type=["wav"])
@@ -240,15 +245,17 @@ def analyze_page():
                 detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
     # Display the word cloud and emotion detection result below the columns
-    st.subheader("📝 Word Cloud from Audio")
-    plt.figure(figsize=(8, 4))
-    plt.imshow(wordcloud, interpolation="bilinear")
-    plt.axis("off")
-    st.pyplot(plt)
+    if wordcloud:
+        st.subheader("📝 Word Cloud from Audio")
+        plt.figure(figsize=(8, 4))
+        plt.imshow(wordcloud, interpolation="bilinear")
+        plt.axis("off")
+        st.pyplot(plt)
 
-    # Display the emotion detection result
-    st.subheader("🧠 Emotion Detection")
-    st.success(detected_emotion)
+    if detected_emotion:
+        st.subheader("🧠 Emotion Detection")
+        st.success(detected_emotion)
+
 
 def project_details_page():
     st.subheader("Project Details")
