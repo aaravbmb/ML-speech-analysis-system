@@ -62,7 +62,16 @@ def sidebar_ui():
     st.sidebar.markdown("---")
 
     # Footer Icons
-    st.sidebar.markdown("[![External](https://img.icons8.com/ios-glyphs/25/ffffff/external-link.png)](https://yourprojectlink.com)", unsafe_allow_html=True)
+    st.sidebar.markdown(
+        """
+        <div class="sidebar-footer">
+            <a href="https://yourprojectlink.com" target="_blank">
+                <img src="https://img.icons8.com/ios-glyphs/25/ffffff/external-link.png"/>
+            </a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     return page
 
