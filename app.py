@@ -48,47 +48,103 @@ def sidebar_ui():
     st.sidebar.markdown(
         """
         <style>
-        /* Make the sidebar a flex column */
+        /* Sidebar overall layout */
         section[data-testid="stSidebar"] > div:first-child {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             height: 100vh;
+            padding-top: 1.5rem;
         }
 
-        /* Center the logo and heading */
+        /* Center the logo */
         .element-container:nth-child(1) img {
             display: block;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .block-container {
-            padding-top: 2rem;
+        /* Title one-liner */
+        .sidebar-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 25px;
         }
 
-        /* Center footer icon */
-        .sidebar-footer {
+        /* Style radio buttons as tabs */
+        div[data-baseweb="radio"] > div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        div[data-baseweb="radio"] label {
+            background-color: #f0f2f6;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
             text-align: center;
-            margin-bottom: 20px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        div[data-baseweb="radio"] label:hover {
+            background-color: #d4d8e0;
+        }
+
+        div[data-baseweb="radio"] input:checked + div {
+            background-color: #4a90e2 !important;
+            color: white !important;
+        }
+
+        /* Footer icon button */
+        .sidebar-footer {
+            margin-top: auto;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .circle-icon {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: #4a90e2;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .circle-icon:hover {
+            background-color: #2f70c9;
+        }
+
+        .circle-icon img {
+            width: 20px;
+            height: 20px;
+            filter: invert(1); /* Makes the icon white */
         }
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    st.sidebar.image("logo.png", width=130)
-    st.sidebar.markdown("<h3 style='text-align: center;'>MoodMatrix: Speech<br>Analysis System</h3>", unsafe_allow_html=True)
+    # Sidebar content
+    st.sidebar.image("logo.png", width=120)
+    st.sidebar.markdown("<div class='sidebar-title'>MoodMatrix: Speech Analysis System</div>", unsafe_allow_html=True)
 
-    # Main Navigation
     page = st.sidebar.radio("", ["Analyze", "Project Details", "About Us"], index=0)
-    st.sidebar.markdown("---")
+    st.sidebar.markdown("<hr>", unsafe_allow_html=True)
 
-    # Footer Icons - centered
+    # Circular icon button at the bottom
     st.sidebar.markdown(
         """
         <div class="sidebar-footer">
-            <a href="https://yourprojectlink.com" target="_blank">
+            <a class="circle-icon" href="https://yourprojectlink.com" target="_blank">
                 <img src="https://img.icons8.com/ios-glyphs/25/ffffff/external-link.png"/>
             </a>
         </div>
@@ -97,6 +153,7 @@ def sidebar_ui():
     )
 
     return page
+
 
 # Pages
 # Modify the analyze_page() function to handle file upload properly
