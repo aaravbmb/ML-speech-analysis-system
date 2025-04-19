@@ -182,7 +182,7 @@ def extract_text_from_audio(audio_data):
 
 # Function to generate a word cloud image with smaller size
 def generate_word_cloud(text):
-    wordcloud = WordCloud(width=200, height=100, background_color="white", max_words=150).generate(text)
+    wordcloud = WordCloud(width=600, height=300, background_color="white", max_words=150).generate(text)
     return wordcloud
 
 def analyze_page():
@@ -246,7 +246,7 @@ def analyze_page():
     # Display the word cloud below the columns
     if wordcloud:
         st.subheader("📝 Word Cloud from Audio")
-        plt.figure(figsize=(2, 1))  # Smaller word cloud figure size
+        plt.figure(figsize=(6, 3)) 
         plt.imshow(wordcloud, interpolation="bilinear")
         plt.axis("off")
         st.pyplot(plt)
