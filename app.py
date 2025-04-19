@@ -257,7 +257,7 @@ def analyze_page():
 
 
 def project_details_page():
-    st.subheader("Project Details")
+    st.subheader("Robust accuracy, powered by the best in class libraries and latest machine learning model. 💪")
 
 def about_us_page():
     st.subheader("Creating projects with passion, creativity and business mindset. 🚀")
