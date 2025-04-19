@@ -156,7 +156,6 @@ def sidebar_ui():
 
 
 # Pages
-# Modify the analyze_page() function to handle file upload properly
 import os
 import tempfile
 import speech_recognition as sr
@@ -244,16 +243,17 @@ def analyze_page():
                 emotion = predict(model, temp_file_path)
                 detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
-    # Display the word cloud and emotion detection result below the columns
+    # Display the word cloud below the columns
     if wordcloud:
         st.subheader("📝 Word Cloud from Audio")
-        plt.figure(figsize=(2, 1))  # Adjusted the size to be smaller
+        plt.figure(figsize=(2, 1))  # Smaller word cloud figure size
         plt.imshow(wordcloud, interpolation="bilinear")
         plt.axis("off")
         st.pyplot(plt)
 
+    # Display the emotion detection result below the word cloud
     if detected_emotion:
-        st.subheader("🧠 Emotion Detection")
+        st.subheader("Emotion Detection 🎉")
         st.success(detected_emotion)
 
 
