@@ -157,17 +157,19 @@ def sidebar_ui():
 
 # Pages
 # Modify the analyze_page() function to handle file upload properly
+import os
+import tempfile
 import speech_recognition as sr
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from io import BytesIO
+import streamlit as st
+from audiorecorder import audiorecorder
 
 # Function to extract text from the recorded audio
 def extract_text_from_audio(audio_data):
     recognizer = sr.Recognizer()
-    audio = sr.AudioFile(audio_data)
-    
-    with audio as source:
+    with sr.AudioFile(audio_data) as source:
         audio_data = recognizer.record(source)  # Record the audio
 
     try:
@@ -193,7 +195,7 @@ def analyze_page():
         'angry': '😡', 'fearful': '😨', 'disgust': '🤢', 'surprised': '😲'
     }
 
-    col1, col2 = st.columns(2,border=True)
+    col1, col2 = st.columns(2, border=True)
 
     with col1:
         st.markdown("#### 🎙️ Record Audio")
@@ -207,7 +209,7 @@ def analyze_page():
             # Save the recorded audio
             audio.export("recorded_audio.wav", format="wav")
 
-            # Extract text from audio and generate word cloud
+            # Extract text from recorded audio and generate word cloud
             text = extract_text_from_audio("recorded_audio.wav")
             wordcloud = generate_word_cloud(text)
 
@@ -229,8 +231,13 @@ def analyze_page():
         if uploaded_file is not None:
             st.audio(uploaded_file, format="audio/wav")
 
+            # Save the uploaded file to a temporary file
+            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                temp_file.write(uploaded_file.getvalue())
+                temp_file_path = temp_file.name
+
             # Extract text from uploaded file and generate word cloud
-            text = extract_text_from_audio(uploaded_file)
+            text = extract_text_from_audio(temp_file_path)
             wordcloud = generate_word_cloud(text)
 
             # Display the word cloud
@@ -241,8 +248,9 @@ def analyze_page():
             st.pyplot(plt)
 
             with st.spinner("Analyzing emotion..."):
-                emotion = predict(model, uploaded_file)
+                emotion = predict(model, temp_file_path)
                 st.success(f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}")
+
 
 def project_details_page():
     st.subheader("Project Details")
