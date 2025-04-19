@@ -157,6 +157,33 @@ def sidebar_ui():
 
 # Pages
 # Modify the analyze_page() function to handle file upload properly
+import speech_recognition as sr
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+from io import BytesIO
+
+# Function to extract text from the recorded audio
+def extract_text_from_audio(audio_data):
+    recognizer = sr.Recognizer()
+    audio = sr.AudioFile(audio_data)
+    
+    with audio as source:
+        audio_data = recognizer.record(source)  # Record the audio
+
+    try:
+        # Use Google's speech recognition to transcribe the audio
+        text = recognizer.recognize_google(audio_data)
+        return text
+    except sr.UnknownValueError:
+        return "Could not understand the audio"
+    except sr.RequestError:
+        return "Speech recognition service is unavailable"
+
+# Function to generate a word cloud image
+def generate_word_cloud(text):
+    wordcloud = WordCloud(width=800, height=400, background_color="white").generate(text)
+    return wordcloud
+
 def analyze_page():
     model = load_model()
     st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
@@ -177,7 +204,19 @@ def analyze_page():
             audio.export(buffer, format="wav")
             st.audio(buffer.getvalue(), format="audio/wav")
 
+            # Save the recorded audio
             audio.export("recorded_audio.wav", format="wav")
+
+            # Extract text from audio and generate word cloud
+            text = extract_text_from_audio("recorded_audio.wav")
+            wordcloud = generate_word_cloud(text)
+
+            # Display the word cloud
+            st.subheader("📝 Word Cloud from Audio")
+            plt.figure(figsize=(8, 4))
+            plt.imshow(wordcloud, interpolation="bilinear")
+            plt.axis("off")
+            st.pyplot(plt)
 
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, "recorded_audio.wav")
@@ -189,6 +228,17 @@ def analyze_page():
 
         if uploaded_file is not None:
             st.audio(uploaded_file, format="audio/wav")
+
+            # Extract text from uploaded file and generate word cloud
+            text = extract_text_from_audio(uploaded_file)
+            wordcloud = generate_word_cloud(text)
+
+            # Display the word cloud
+            st.subheader("📝 Word Cloud from Audio")
+            plt.figure(figsize=(8, 4))
+            plt.imshow(wordcloud, interpolation="bilinear")
+            plt.axis("off")
+            st.pyplot(plt)
 
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, uploaded_file)
