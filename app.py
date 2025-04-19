@@ -194,7 +194,7 @@ def analyze_page():
         'angry': '😡', 'fearful': '😨', 'disgust': '🤢', 'surprised': '😲'
     }
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2,border=True)
 
     wordcloud = None  # Initialize wordcloud variable
     detected_emotion = ""
@@ -243,18 +243,16 @@ def analyze_page():
                 emotion = predict(model, temp_file_path)
                 detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
-    # Display the word cloud below the columns
+    if detected_emotion:
+        st.subheader("Emotion Detection 🎉")
+        st.success(detected_emotion)
+
     if wordcloud:
         st.subheader("📝 Word Cloud from Audio")
         plt.figure(figsize=(6, 3)) 
         plt.imshow(wordcloud, interpolation="bilinear")
         plt.axis("off")
         st.pyplot(plt)
-
-    # Display the emotion detection result below the word cloud
-    if detected_emotion:
-        st.subheader("Emotion Detection 🎉")
-        st.success(detected_emotion)
 
 
 
