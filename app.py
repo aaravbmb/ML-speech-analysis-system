@@ -62,11 +62,7 @@ def sidebar_ui():
     st.sidebar.markdown("---")
 
     # Footer Icons
-    col1, col2 = st.sidebar.columns(2)
-    with col1:
-        st.markdown("[![GitHub](https://img.icons8.com/ios-filled/25/ffffff/github.png)](https://github.com)", unsafe_allow_html=True)
-    with col2:
-        st.markdown("[![External](https://img.icons8.com/ios-glyphs/25/ffffff/external-link.png)](https://yourprojectlink.com)", unsafe_allow_html=True)
+    st.markdown("[![External](https://img.icons8.com/ios-glyphs/25/ffffff/external-link.png)](https://yourprojectlink.com)", unsafe_allow_html=True)
 
     return page
 
@@ -81,7 +77,7 @@ def analyze_page():
         'angry': '😡', 'fearful': '😨', 'disgust': '🤢', 'surprised': '😲'
     }
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2,border=True)
 
     with col1:
         st.markdown("#### 🎙️ Record Audio")
