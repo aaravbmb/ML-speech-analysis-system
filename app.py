@@ -48,9 +48,30 @@ def sidebar_ui():
     st.sidebar.markdown(
         """
         <style>
-        .sidebar-content { display: flex; flex-direction: column; align-items: center; }
-        .element-container:nth-child(1) img { display: block; margin-left: auto; margin-right: auto; }
-        .block-container { padding-top: 2rem; }
+        /* Make the sidebar a flex column */
+        section[data-testid="stSidebar"] > div:first-child {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+        }
+
+        /* Center the logo and heading */
+        .element-container:nth-child(1) img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .block-container {
+            padding-top: 2rem;
+        }
+
+        /* Center footer icon */
+        .sidebar-footer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
         </style>
         """,
         unsafe_allow_html=True
@@ -58,10 +79,12 @@ def sidebar_ui():
 
     st.sidebar.image("logo.png", width=130)
     st.sidebar.markdown("<h3 style='text-align: center;'>MoodMatrix: Speech<br>Analysis System</h3>", unsafe_allow_html=True)
+
+    # Main Navigation
     page = st.sidebar.radio("", ["Analyze", "Project Details", "About Us"], index=0)
     st.sidebar.markdown("---")
 
-    # Footer Icons
+    # Footer Icons - centered
     st.sidebar.markdown(
         """
         <div class="sidebar-footer">
