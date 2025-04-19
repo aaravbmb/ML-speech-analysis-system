@@ -181,9 +181,9 @@ def extract_text_from_audio(audio_data):
     except sr.RequestError:
         return "Speech recognition service is unavailable"
 
-# Function to generate a word cloud image
+# Function to generate a word cloud image with smaller size
 def generate_word_cloud(text):
-    wordcloud = WordCloud(width=800, height=400, background_color="white").generate(text)
+    wordcloud = WordCloud(width=600, height=300, background_color="white", max_words=150).generate(text)
     return wordcloud
 
 def analyze_page():
@@ -247,7 +247,7 @@ def analyze_page():
     # Display the word cloud and emotion detection result below the columns
     if wordcloud:
         st.subheader("📝 Word Cloud from Audio")
-        plt.figure(figsize=(8, 4))
+        plt.figure(figsize=(6, 3))  # Adjusted the size to be smaller
         plt.imshow(wordcloud, interpolation="bilinear")
         plt.axis("off")
         st.pyplot(plt)
@@ -255,6 +255,7 @@ def analyze_page():
     if detected_emotion:
         st.subheader("🧠 Emotion Detection")
         st.success(detected_emotion)
+
 
 
 def project_details_page():
