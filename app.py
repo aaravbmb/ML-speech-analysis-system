@@ -195,7 +195,7 @@ def analyze_page():
         'angry': '😡', 'fearful': '😨', 'disgust': '🤢', 'surprised': '😲'
     }
 
-    col1, col2 = st.columns(2, border=True)
+    col1, col2 = st.columns(2)
 
     with col1:
         st.markdown("#### 🎙️ Record Audio")
@@ -213,16 +213,10 @@ def analyze_page():
             text = extract_text_from_audio("recorded_audio.wav")
             wordcloud = generate_word_cloud(text)
 
-            # Display the word cloud
-            st.subheader("📝 Word Cloud from Audio")
-            plt.figure(figsize=(8, 4))
-            plt.imshow(wordcloud, interpolation="bilinear")
-            plt.axis("off")
-            st.pyplot(plt)
-
+            # Emotion analysis
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, "recorded_audio.wav")
-                st.success(f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}")
+                detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
     with col2:
         st.markdown("#### 📁 Upload Audio File")
@@ -240,17 +234,21 @@ def analyze_page():
             text = extract_text_from_audio(temp_file_path)
             wordcloud = generate_word_cloud(text)
 
-            # Display the word cloud
-            st.subheader("📝 Word Cloud from Audio")
-            plt.figure(figsize=(8, 4))
-            plt.imshow(wordcloud, interpolation="bilinear")
-            plt.axis("off")
-            st.pyplot(plt)
-
+            # Emotion analysis
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, temp_file_path)
-                st.success(f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}")
+                detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
+    # Display the word cloud and emotion detection result below the columns
+    st.subheader("📝 Word Cloud from Audio")
+    plt.figure(figsize=(8, 4))
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    st.pyplot(plt)
+
+    # Display the emotion detection result
+    st.subheader("🧠 Emotion Detection")
+    st.success(detected_emotion)
 
 def project_details_page():
     st.subheader("Project Details")
