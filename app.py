@@ -135,7 +135,7 @@ def sidebar_ui():
 
     # Sidebar content
     st.sidebar.image("logo.png", width=120)
-    st.sidebar.markdown("<img src="logo.png"></img><div class='sidebar-title'>MoodMatrix: Speech Analysis System</div>", unsafe_allow_html=True)
+    st.sidebar.markdown("<img src=logo.png></img><div class='sidebar-title'>MoodMatrix: Speech Analysis System</div>", unsafe_allow_html=True)
 
     page = st.sidebar.radio("", ["Analyze", "Project Details", "About Us"], index=0)
     st.sidebar.markdown("<hr>", unsafe_allow_html=True)
