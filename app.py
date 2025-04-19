@@ -275,13 +275,150 @@ def project_details_page():
     """)
 
 def about_us_page():
-    st.subheader("About Us")
-    st.markdown("""
-    We are a team of passionate engineers building AI tools for real-world applications.
+    st.subheader("Creating projects with passion, creativity and business mindset. 🚀")
+    st.markdown(
+        """<style>
+            *{
+                padding:0px;     
+            }
+            .cards{
+                margin:5px;
+                background-color: #d9d9d9;
+                box-shadow: -10px -10px 30px 0px rgba(255,255,255,0.2), 10px 10px 30px 0px rgba(0, 0, 0, 0.5);
+                width: 500px;
+                height:275px;
+                border-radius:20px;
+            }
+            .wrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: center; /* center rows horizontally */
+                gap: 20px; /* space between top and bottom */
+                justify-content: center; /* center the whole wrapper vertically */
+            }
+            .top-row {
+                display: flex;
+                gap: 20px; /* space between top cards */
+                justify-content: center;
+            }
+            .bottom-row {
+                display: flex;
+                justify-content: center;
+            }
+            .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
 
-    **Contact:** moodmatrix@example.com  
-    **GitHub:** [github.com/moodmatrix](https://github.com)  
-    """)
+    .profile-img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    .title-box {
+        margin-left: 5px;
+        flex-grow: 1;
+        font-size:20px;
+    }
+
+    .card-title {
+        margin: 0;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .card-subtitle {
+        margin: 0;
+        font-size: 16px;
+        color: grey;
+    }
+
+    .linkedin-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        background-color: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        margin-top:20px;
+        margin-right:20px;
+    }
+
+    .linkedin-icon img {
+        width: 25px;
+        filter: brightness(0) invert(1);
+    }
+
+    .card-body {
+        margin-top: 5px;
+        margin-left:20px;
+        padding-right:30px;
+        padding-left:15px;
+        font-size: 16px;
+        color: #000;
+    }
+            </style>"""
+        ,unsafe_allow_html=True
+    )
+    st.markdown("""<div class='wrapper'>
+                    <div class='top-row'>
+                        <div class='cards'>
+                            <div class="card-header">
+            <div style="display: flex; align-items: center;">
+                <img class="profile-img" src="https://i.imgur.com/a03oGBu.png" alt="Profile Photo">
+                <div class="title-box">
+                    <p class="card-title">Devangi Bedi</p>
+                    <p class="card-subtitle">Consultant at Great Learning</p>
+                </div>
+            </div>
+            <a class="linkedin-icon" href="https://www.linkedin.com/in/devangi-bedi" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+            </a>
+        </div>
+        <div class="card-body">
+            Passionate about leveraging technology to solve real world problems. She is working as a consultant at Great Learning with prior experience in product management & cloud computing.
+        </div>
+                        </div>
+                        <div class='cards'><div class="card-header">
+            <div style="display: flex; align-items: center;">
+                <img class="profile-img" src="https://i.imgur.com/5uUvNYt.png" alt="Profile Photo">
+                <div class="title-box">
+                    <p class="card-title">Akshita Panwar</p>
+                    <p class="card-subtitle">Machine Learning Engineer</p>
+                </div>
+            </div>
+            <a class="linkedin-icon" href="https://www.linkedin.com/in/devangi-bedi" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+            </a>
+        </div>
+        <div class="card-body">
+            She is driven by the potential of AI and ML to create innovative solutions. As an aspiring engineer, she is dedicated to exploring deep learning technologies to build impactful solutions.
+        </div>
+                </div>
+                    </div>
+                    <div class='bottom-row'>
+                        <div class='cards'><div class="card-header">
+            <div style="display: flex; align-items: center;">
+                <img class="profile-img" src="https://i.imgur.com/zCsG4yg.png" alt="Profile Photo">
+                <div class="title-box">
+                    <p class="card-title">Aarav Bamba</p>
+                    <p class="card-subtitle">Product Analyst at XEBO.ai</p>
+                </div>
+            </div>
+            <a class="linkedin-icon" href="https://www.linkedin.com/in/devangi-bedi" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+            </a>
+        </div>
+        <div class="card-body">
+            Leveraging Machine Learning and latest AI tools to spearhead AI-based solutions. Proficient with product management, ensuring that all technical solutions provide value to customers.
+        </div>
+                </div>
+                    </div>
+                </div>""",unsafe_allow_html=True)
 
 # Main App
 def main():
