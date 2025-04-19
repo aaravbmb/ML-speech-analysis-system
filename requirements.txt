@@ -6,7 +6,3 @@ soundfile
 scipy
 streamlit-option-menu
 streamlit-audiorecorder
-wordcloud
-speechrecognition
-pydub
-pyaudio
