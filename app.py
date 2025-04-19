@@ -258,21 +258,6 @@ def analyze_page():
 
 def project_details_page():
     st.subheader("Project Details")
-    st.markdown("""
-    This project uses deep learning (LSTM) to classify emotions from speech based on MFCC audio features.
-
-    **Technologies:**
-    - TensorFlow/Keras
-    - Librosa for audio processing
-    - Streamlit for UI
-
-    **Model Input:**
-    - `.wav` files
-    - Extracted MFCCs (40 coefficients)
-
-    **Emotions Covered:**
-    Neutral, Calm, Happy, Sad, Angry, Fearful, Disgust, Surprised
-    """)
 
 def about_us_page():
     st.subheader("Creating projects with passion, creativity and business mindset. 🚀")
