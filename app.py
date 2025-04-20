@@ -53,24 +53,24 @@ def sidebar_ui():
     st.markdown(
         """
         <style>
-        /* Hide the radio circle completely */
-        [data-baseweb="radio"] .st-bo{
+        /* Hide radio circles */
+        [data-baseweb="radio"] .st-bo {
             display: none;
         }
 
-        /* Style the labels to look like tabs */
-        [data-baseweb="radio"]{
-            margin:auto;
+        [data-baseweb="radio"] {
+            margin: auto;
         }
+
         [data-baseweb="radio"] > div {
             display: flex;
             flex-direction: row;
             justify-content: center;
-            width:200px;
-            padding:10px;
+            padding: 10px;
             gap: 8px;
-            background:rgba(200,200,200,0.1);
-            border-radius:5px;
+            width:200px;
+            background: rgba(200,200,200,0.1);
+            border-radius: 5px;
             margin-top: 20px;
         }
 
@@ -85,14 +85,13 @@ def sidebar_ui():
             transition: 0.2s ease-in-out;
         }
 
-        [data-baseweb="radio"] input:checked + div {
+        [data-baseweb="radio"] label[data-selected="true"] {
             background-color: rgba(200,200,200,0.5);
             color: white;
             border-radius: 6px;
             border: 1px solid rgba(200,200,200,0.1);
         }
 
-        /* Sidebar image and title */
         .sidebar-img img {
             width: 100px;
             display: block;
