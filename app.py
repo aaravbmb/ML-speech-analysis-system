@@ -53,11 +53,6 @@ def sidebar_ui():
     st.markdown(
         """
         <style>
-        /* Hide radio circles */
-        [data-baseweb="radio"] .st-bo {
-            display: none;
-        }
-
         [data-baseweb="radio"] {
             margin: auto;
         }
