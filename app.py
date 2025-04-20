@@ -57,11 +57,15 @@ def sidebar_ui():
             margin: auto;
         }
 
+        [data-baseweb="radio"] .st-au{
+            display:none;
+        }
         [data-baseweb="radio"] > div {
             display: flex;
             flex-direction: row;
             justify-content: center;
             padding: 10px;
+            width:200px;
             gap: 8px;
             background: rgba(200,200,200,0.1);
             border-radius: 5px;
