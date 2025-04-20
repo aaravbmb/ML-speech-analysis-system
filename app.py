@@ -25,6 +25,7 @@ def extract_features(audio_data, sr):
     return mfccs_mean.reshape(1, -1)
 
 # Predict emotion from audio
+
 def predict(model, audio_file_path, scaler):
     # Load the audio file
     audio_data, sr = librosa.load(audio_file_path, sr=None)
@@ -35,13 +36,15 @@ def predict(model, audio_file_path, scaler):
     # Scale the features using the loaded scaler
     features_scaled = scaler.transform(features)
 
+    # ✅ Reshape features to match the model input
+    features_scaled = features_scaled.reshape(1, 40, 1)
+
     # Predict the emotion using the trained model
     emotion = model.predict(features_scaled)
 
-    # Map emotion index to label (adjust according to your model's output)
+    # Map emotion index to label
     emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
     
-    # Ensure the prediction is a 1D array and return the corresponding label
     predicted_emotion = emotion_labels[np.argmax(emotion)]
 
     return predicted_emotion
@@ -201,8 +204,73 @@ def load_scaler():
 def analyze_page():
     model = load_model()
     scaler = load_scaler()  # Load the scaler here
-    # 🔍 Debug: Print the model's expected input shape
-    st.write(f"Model input shape: {model.input_shape}")
+    
+    st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
+
+    emoji_map = {
+        'neutral': '😐', 'calm': '😌', 'happy': '😄', 'sad': '😢',
+        'angry': '😡', 'fearful': '😨', 'disgust': '🤢', 'surprised': '😲'
+    }
+
+    col1, col2 = st.columns(2, border=True)
+
+    wordcloud = None  # Initialize wordcloud variable
+    detected_emotion = ""
+
+    # Handle Audio Recording in col1
+    with col1:
+        st.markdown("#### 🎙️ Record Audio")
+        audio = audiorecorder("Click to Record", "Recording...")
+
+        if len(audio) > 0:
+            buffer = BytesIO()
+            audio.export(buffer, format="wav")
+            st.audio(buffer.getvalue(), format="audio/wav")
+
+            # Save the recorded audio
+            audio.export("recorded_audio.wav", format="wav")
+
+            # Extract text from recorded audio and generate word cloud
+            text = extract_text_from_audio("recorded_audio.wav")
+            wordcloud = generate_word_cloud(text)
+
+            # Emotion analysis
+            with st.spinner("Analyzing emotion..."):
+                emotion = predict(model, "recorded_audio.wav", scaler)  # Pass the scaler here
+                detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
+
+    # Handle File Upload in col2
+    with col2:
+        st.markdown("#### 📁 Upload Audio File")
+        uploaded_file = st.file_uploader("Choose a .wav file", type=["wav"])
+
+        if uploaded_file is not None:
+            st.audio(uploaded_file, format="audio/wav")
+
+            # Save the uploaded file to a temporary file
+            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                temp_file.write(uploaded_file.getvalue())
+                temp_file_path = temp_file.name
+
+            # Extract text from uploaded file and generate word cloud
+            text = extract_text_from_audio(temp_file_path)
+            wordcloud = generate_word_cloud(text)
+
+            # Emotion analysis
+            with st.spinner("Analyzing emotion..."):
+                emotion = predict(model, temp_file_path, scaler)  # Pass the scaler here
+                detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
+
+    if detected_emotion:
+        st.subheader("Emotion Detection 🎉")
+        st.success(detected_emotion)
+
+    if wordcloud:
+        st.subheader("📝 Word Cloud from Audio")
+        plt.figure(figsize=(6, 3)) 
+        plt.imshow(wordcloud, interpolation="bilinear")
+        plt.axis("off")
+        st.pyplot(plt)
 
 
 def project_details_page():
