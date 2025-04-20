@@ -205,7 +205,7 @@ def analyze_page():
     model = load_model()
     scaler = load_scaler()  # Load the scaler here
     
-    st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
+    st.subheader("Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis. 🎤")
 
     emoji_map = {
         'neutral': '😐', 'calm': '😌', 'happy': '😄', 'sad': '😢',
