@@ -31,26 +31,22 @@ def extract_mfcc(wav_file, target_duration=3):
 
 
 # Predict emotion from audio
-def predict(model, wav_file, scaler, emotions):
-    # Extract MFCC features from the wav file
-    mfcc = extract_mfcc(wav_file)
-    
-    # Reshape and normalize the MFCC
-    mfcc = np.array(mfcc).reshape(1, -1)
-    
-    # Normalize using the same scaler that was used during training
-    mfcc = scaler.transform(mfcc)
+def predict(model, audio_file_path, scaler):
+    # Load the audio file
+    audio_data, sr = librosa.load(audio_file_path, sr=None)
 
-    # Reshape to match model input shape (1, 40, 2)
-    mfcc = np.expand_dims(mfcc, -1)  # Add an extra dimension for the "channels"
-    mfcc = np.repeat(mfcc, 2, axis=-1)  # Duplicate the feature to match input shape (1, 40, 2)
+    # Preprocess audio (e.g., feature extraction)
+    features = extract_features(audio_data, sr)
 
-    # Predict emotion using the model
-    predictions = model.predict(mfcc)
+    # Scale the features using the scaler
+    features_scaled = scaler.transform(features)
 
-    # Get the predicted label and corresponding emotion
-    predicted_label = np.argmax(predictions[0])
-    predicted_emotion = emotions[predicted_label]
+    # Predict emotion using the trained model
+    emotion = model.predict(features_scaled)
+
+    # Map emotion index to label (adjust according to your model's output)
+    emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
+    predicted_emotion = emotion_labels[np.argmax(emotion)]
 
     return predicted_emotion
 
