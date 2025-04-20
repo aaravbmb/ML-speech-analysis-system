@@ -271,8 +271,6 @@ def analyze_page():
         plt.axis("off")
         st.pyplot(plt)
 
-
-
 def project_details_page():
     st.subheader("Robust accuracy, powered by the best in class libraries and latest machine learning model. 💪")
 
