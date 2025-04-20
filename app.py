@@ -29,6 +29,7 @@ def extract_mfcc(wav_file, target_duration=3):
     mfccs = np.mean(librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40).T, axis=0)
     return mfccs
 
+
 # Predict emotion from audio
 def predict(model, wav_file, scaler, emotions):
     # Extract MFCC features from the wav file
@@ -36,11 +37,13 @@ def predict(model, wav_file, scaler, emotions):
     
     # Reshape and normalize the MFCC
     mfcc = np.array(mfcc).reshape(1, -1)
-    mfcc = scaler.transform(mfcc)  # Normalize using the same scaler as in training
+    
+    # Normalize using the same scaler that was used during training
+    mfcc = scaler.transform(mfcc)
 
     # Reshape to match model input shape (1, 40, 2)
-    mfcc = np.expand_dims(mfcc, -1)
-    mfcc = np.repeat(mfcc, 2, axis=-1)  # Duplicate the feature to match input shape
+    mfcc = np.expand_dims(mfcc, -1)  # Add an extra dimension for the "channels"
+    mfcc = np.repeat(mfcc, 2, axis=-1)  # Duplicate the feature to match input shape (1, 40, 2)
 
     # Predict emotion using the model
     predictions = model.predict(mfcc)
