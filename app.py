@@ -166,7 +166,7 @@ def sidebar_ui():
     return page
 
 
-# Pages
+#pages
 import os
 import tempfile
 import speech_recognition as sr
@@ -196,8 +196,18 @@ def generate_word_cloud(text):
     wordcloud = WordCloud(width=600, height=300, background_color="white", max_words=150).generate(text)
     return wordcloud
 
+# Assuming the model and scaler loading functions are defined elsewhere
+def load_model():
+    # Load your model (dummy function here)
+    return "your_model"
+
+def load_scaler():
+    # Load your scaler (dummy function here)
+    return "your_scaler"
+
 def analyze_page():
     model = load_model()
+    scaler = load_scaler()  # Load the scaler here
     st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
 
     emoji_map = {
@@ -205,7 +215,7 @@ def analyze_page():
         'angry': '😡', 'fearful': '😨', 'disgust': '🤢', 'surprised': '😲'
     }
 
-    col1, col2 = st.columns(2,border=True)
+    col1, col2 = st.columns(2, border=True)
 
     wordcloud = None  # Initialize wordcloud variable
     detected_emotion = ""
@@ -229,7 +239,7 @@ def analyze_page():
 
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
-                emotion = predict(model, "recorded_audio.wav")
+                emotion = predict(model, "recorded_audio.wav", scaler)  # Pass the scaler here
                 detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
     # Handle File Upload in col2
@@ -251,7 +261,7 @@ def analyze_page():
 
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
-                emotion = predict(model, temp_file_path)
+                emotion = predict(model, temp_file_path, scaler)  # Pass the scaler here
                 detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
     if detected_emotion:
