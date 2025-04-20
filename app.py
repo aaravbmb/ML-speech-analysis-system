@@ -14,34 +14,32 @@ def load_model():
     return tf.keras.models.load_model('emotionrecognition.h5')
 
 # Extract MFCC features
-def extract_mfcc(wav_file, target_duration=3):
-    y, sr = librosa.load(wav_file)
-    
-    # Ensure the audio is 3 seconds long
-    target_samples = target_duration * sr
-    
-    if len(y) > target_samples:
-        y = y[:target_samples]  # Truncate if audio is longer than 3 seconds
-    elif len(y) < target_samples:
-        y = np.pad(y, (0, target_samples - len(y)))  # Pad if audio is shorter than 3 seconds
-    
-    # Extract MFCC features
-    mfccs = np.mean(librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40).T, axis=0)
-    return mfccs
+import librosa
+import numpy as np
 
+def extract_features(audio_data, sr):
+    # Extract MFCC features from audio data
+    mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=13)
+    
+    # Take the mean of the MFCCs for each coefficient across the frames
+    mfccs_mean = np.mean(mfccs, axis=1)
+    
+    # Return the features as a flattened array
+    return mfccs_mean.reshape(1, -1)
 
 # Predict emotion from audio
+
 def predict(model, audio_file_path, scaler):
     # Load the audio file
     audio_data, sr = librosa.load(audio_file_path, sr=None)
 
-    # Preprocess audio (e.g., feature extraction)
+    # Extract features from the audio file
     features = extract_features(audio_data, sr)
 
     # Scale the features using the scaler
     features_scaled = scaler.transform(features)
 
-    # Predict emotion using the trained model
+    # Predict the emotion using the trained model
     emotion = model.predict(features_scaled)
 
     # Map emotion index to label (adjust according to your model's output)
@@ -49,6 +47,7 @@ def predict(model, audio_file_path, scaler):
     predicted_emotion = emotion_labels[np.argmax(emotion)]
 
     return predicted_emotion
+
 
 # Sidebar Styling & Navigation
 def sidebar_ui():
@@ -192,14 +191,6 @@ def generate_word_cloud(text):
     wordcloud = WordCloud(width=600, height=300, background_color="white", max_words=150).generate(text)
     return wordcloud
 
-# Assuming the model and scaler loading functions are defined elsewhere
-def load_model():
-    # Load your model (dummy function here)
-    return "your_model"
-
-def load_scaler():
-    # Load your scaler (dummy function here)
-    return "your_scaler"
 
 def analyze_page():
     model = load_model()
