@@ -49,115 +49,80 @@ def predict(model, audio_file_path, scaler):
 
     return predicted_emotion
 
-
-# Sidebar Styling & Navigation
 def sidebar_ui():
-    st.sidebar.markdown(
+    st.markdown(
         """
         <style>
-        /* Sidebar overall layout */
-        section[data-testid="stSidebar"] > div:first-child {
+        /* Hide the radio circle completely */
+        [data-baseweb="radio"] .st-bo{
+            display: none;
+        }
+
+        /* Style the labels to look like tabs */
+        [data-baseweb="radio"]{
+            margin:auto;
+        }
+        [data-baseweb="radio"] > div {
             display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            height: 100vh;
-            padding-top: 1.5rem;
-        }
-
-        /* Center the logo */
-        .element-container:nth-child(1) img {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Title one-liner */
-        .sidebar-title {
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 25px;
-        }
-
-        /* Style radio buttons as tabs */
-        div[data-baseweb="radio"] > div {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        div[data-baseweb="radio"] label {
-            background-color: #f0f2f6;
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            text-align: center;
-            color: #333;
-            font-weight: 500;
-        }
-
-        div[data-baseweb="radio"] label:hover {
-            background-color: #d4d8e0;
-        }
-
-        div[data-baseweb="radio"] input:checked + div {
-            background-color: #4a90e2 !important;
-            color: white !important;
-        }
-
-        /* Footer icon button */
-        .sidebar-footer {
-            margin-top: auto;
-            text-align: center;
-            padding-bottom: 20px;
-        }
-
-        .circle-icon {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background-color: #4a90e2;
-            border-radius: 50%;
-            display: flex;
+            flex-direction: row;
             justify-content: center;
-            align-items: center;
-            transition: background 0.3s ease;
+            width:200px;
+            padding:10px;
+            gap: 8px;
+            background:rgba(200,200,200,0.1);
+            border-radius:5px;
+            margin-top: 20px;
         }
 
-        .circle-icon:hover {
-            background-color: #2f70c9;
+        [data-baseweb="radio"] label {
+            background-color: #f0f2f6;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-family: 'Helvetica', sans-serif;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: 0.2s ease-in-out;
         }
 
-        .circle-icon img {
-            width: 20px;
-            height: 20px;
-            filter: invert(1); /* Makes the icon white */
+        [data-baseweb="radio"] input:checked + div {
+            background-color: rgba(200,200,200,0.5);
+            color: white;
+            border-radius: 6px;
+            border: 1px solid rgba(200,200,200,0.1);
+        }
+
+        /* Sidebar image and title */
+        .sidebar-img img {
+            width: 100px;
+            display: block;
+            margin: auto;
+            margin-top: 60px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-title {
+            font-weight: bold;
+            font-family: Helvetica;
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 10px;
         }
         </style>
-        """,
-        unsafe_allow_html=True
+        """, unsafe_allow_html=True
     )
 
-    # Sidebar content
-    st.sidebar.image("logo.png", width=120)
-    st.sidebar.markdown("<div class='sidebar-title'>MoodMatrix: Speech Analysis System</div>", unsafe_allow_html=True)
-
-    page = st.sidebar.radio("", ["Analyze", "Project Details", "About Us"], index=0)
-    st.sidebar.markdown("<hr>", unsafe_allow_html=True)
-
-    # Circular icon button at the bottom
     st.sidebar.markdown(
         """
-        <div class="sidebar-footer">
-            <a class="circle-icon" href="https://yourprojectlink.com" target="_blank">
-                <img src="https://img.icons8.com/ios-glyphs/25/ffffff/external-link.png"/>
-            </a>
+        <div class="sidebar-img">
+            <img src="https://i.imgur.com/8HCrHAQ.png"/>
         </div>
+        <div class='sidebar-title'>MoodMatrix: Speech Analysis System</div>
         """,
         unsafe_allow_html=True
     )
+
+    page = st.sidebar.radio("", ["Analyze", "Project Details", "About Us"], index=0)
 
     return page
 
