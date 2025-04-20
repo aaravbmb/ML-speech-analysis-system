@@ -16,7 +16,7 @@ def load_model():
 # Extract MFCC features from audio data
 def extract_features(audio_data, sr):
     # Extract MFCC features from audio data
-    mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=13)
+    mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=40)
     
     # Take the mean of the MFCCs for each coefficient across the frames
     mfccs_mean = np.mean(mfccs, axis=1)
