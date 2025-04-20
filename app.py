@@ -6,6 +6,7 @@ from PIL import Image
 import wave
 from audiorecorder import audiorecorder
 from io import BytesIO
+from sklearn.preprocessing import StandardScaler
 
 # Load the model once
 @st.cache_resource(show_spinner=False)
@@ -29,18 +30,25 @@ def extract_mfcc(wav_file, target_duration=3):
     return mfccs
 
 # Predict emotion from audio
-def predict(model, wav_file):
-    emotions = {
-        0: 'neutral', 1: 'calm', 2: 'happy', 3: 'sad',
-        4: 'angry', 5: 'fearful', 6: 'disgust', 7: 'surprised'
-    }
-
+def predict(model, wav_file, scaler, emotions):
+    # Extract MFCC features from the wav file
     mfcc = extract_mfcc(wav_file)
-    mfcc = np.reshape(mfcc, (1, 40, 1))
+    
+    # Reshape and normalize the MFCC
+    mfcc = np.array(mfcc).reshape(1, -1)
+    mfcc = scaler.transform(mfcc)  # Normalize using the same scaler as in training
+
+    # Reshape to match model input shape (1, 40, 2)
+    mfcc = np.expand_dims(mfcc, -1)
+    mfcc = np.repeat(mfcc, 2, axis=-1)  # Duplicate the feature to match input shape
+
+    # Predict emotion using the model
     predictions = model.predict(mfcc)
 
-    predicted_index = np.argmax(predictions[0])
-    predicted_emotion = emotions[predicted_index]
+    # Get the predicted label and corresponding emotion
+    predicted_label = np.argmax(predictions[0])
+    predicted_emotion = emotions[predicted_label]
+
     return predicted_emotion
 
 # Sidebar Styling & Navigation
