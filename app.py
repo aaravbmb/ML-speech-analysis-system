@@ -3,20 +3,17 @@ import numpy as np
 import tensorflow as tf
 import librosa
 from PIL import Image
-import wave
 from audiorecorder import audiorecorder
 from io import BytesIO
 from sklearn.preprocessing import StandardScaler
+import joblib  # Import joblib to load the scaler
 
 # Load the model once
 @st.cache_resource(show_spinner=False)
 def load_model():
     return tf.keras.models.load_model('emotionrecognition.h5')
 
-# Extract MFCC features
-import librosa
-import numpy as np
-
+# Extract MFCC features from audio data
 def extract_features(audio_data, sr):
     # Extract MFCC features from audio data
     mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=13)
@@ -28,7 +25,6 @@ def extract_features(audio_data, sr):
     return mfccs_mean.reshape(1, -1)
 
 # Predict emotion from audio
-
 def predict(model, audio_file_path, scaler):
     # Load the audio file
     audio_data, sr = librosa.load(audio_file_path, sr=None)
@@ -36,7 +32,7 @@ def predict(model, audio_file_path, scaler):
     # Extract features from the audio file
     features = extract_features(audio_data, sr)
 
-    # Scale the features using the scaler
+    # Scale the features using the loaded scaler
     features_scaled = scaler.transform(features)
 
     # Predict the emotion using the trained model
@@ -44,6 +40,8 @@ def predict(model, audio_file_path, scaler):
 
     # Map emotion index to label (adjust according to your model's output)
     emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
+    
+    # Ensure the prediction is a 1D array and return the corresponding label
     predicted_emotion = emotion_labels[np.argmax(emotion)]
 
     return predicted_emotion
@@ -160,8 +158,7 @@ def sidebar_ui():
 
     return page
 
-
-#pages
+#Pages
 import os
 import tempfile
 import speech_recognition as sr
@@ -170,6 +167,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import streamlit as st
 from audiorecorder import audiorecorder
+import joblib  # Import joblib to load the scaler
 
 # Function to extract text from the recorded audio
 def extract_text_from_audio(audio_data):
@@ -191,10 +189,19 @@ def generate_word_cloud(text):
     wordcloud = WordCloud(width=600, height=300, background_color="white", max_words=150).generate(text)
     return wordcloud
 
+# Load the model and scaler
+@st.cache_resource(show_spinner=False)
+def load_model():
+    return tf.keras.models.load_model('emotionrecognition.h5')
+
+@st.cache_resource(show_spinner=False)
+def load_scaler():
+    return joblib.load('scaler.pkl')  # Load the scaler here
 
 def analyze_page():
     model = load_model()
     scaler = load_scaler()  # Load the scaler here
+    
     st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
 
     emoji_map = {
@@ -261,6 +268,7 @@ def analyze_page():
         plt.imshow(wordcloud, interpolation="bilinear")
         plt.axis("off")
         st.pyplot(plt)
+
 
 def project_details_page():
     st.subheader("Robust accuracy, powered by the best in class libraries and latest machine learning model. 💪")
