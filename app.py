@@ -272,6 +272,47 @@ def analyze_page():
 
 def project_details_page():
     st.subheader("Robust accuracy, powered by the best in class libraries and latest machine learning model. 💪")
+    st.markdown('<a href="https://docs.google.com/document/d/e/2PACX-1vSqZGsDtJFUJPcTCzbpMihUgqeXAeWjtGLsMgRta_tadII2Ez5ZXMYZ6vJVWpzb2K59A4c0P4F9e12p/pub" target="_blank">Click Here to view the Full Report</a>', unsafe_allow_html=True)
+
+    col1, col2 = st.columns([0.6,0.4],border=True)
+
+    with col1:
+        st.markdown("<h3>Accuracy: <span style='color:lightgreen;'>86.63%</span></h3>",unsafe_allow_html=True)
+        st.caption("as compared to industry standard (~84%)")
+    
+    with col2:
+        st.text("Precision: ~87%")
+        st.text("Recall: ~87%")
+        st.text("F1 Score: ~87%")
+    
+    col3 , col4 = st.columns([0.7,0.3],border=True)
+
+    with col3:
+        imgwidth = 300
+        st.subheader("Performance Metrics")
+        st.caption("Training and Validation Accuracy")
+        st.image("learningcurve/accuracy.png")
+        st.caption("Training and Validation Loss")
+        st.image("learningcurve/loss.png")
+        st.caption("Confusion Matrix")
+        st.image("learningcurve/confusionmatrix.png")
+    
+    with col4:
+        st.markdown("**Model Used**")
+        st.markdown("LSTM")
+        st.caption("Unlike RNNs, LLMs (like Transformers) process entire input sequences simultaneously, enabling better context understanding, scalability, and performance in complex language tasks.")
+        st.divider()
+        st.markdown("**Audio Processing**")
+        st.markdown("Librosa")
+        st.caption("Librosa is widely used to extract features like MFCCs (Mel-frequency cepstral coefficients), which represent the short-term power spectrum of sound. MFCCs capture vocal characteristics that vary with emotions, making them ideal input features for training emotion recognition models.")
+        st.divider()
+        st.markdown("**Audio Transcription**")
+        st.markdown("Recognizer - Google Speech Recognizer")
+        st.caption("A recognizer converts spoken audio into text. We use Google Speech Recognizer to transcribe audio, then generate a word cloud from the transcribed text.")
+        st.divider()
+        st.markdown("**Deployment**")
+        st.markdown("Streamlit")
+        st.caption("Streamlit is a Python framework for building interactive web apps quickly, often used for data science and machine learning demos with minimal code.")
 
 def about_us_page():
     st.subheader("Creating projects with passion, creativity and business mindset. 🚀")
