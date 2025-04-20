@@ -201,6 +201,8 @@ def load_scaler():
 def analyze_page():
     model = load_model()
     scaler = load_scaler()  # Load the scaler here
+    # 🔍 Debug: Print the model's expected input shape
+    st.write(f"Model input shape: {model.input_shape}")
     
     st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
 
