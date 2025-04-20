@@ -63,7 +63,6 @@ def sidebar_ui():
             justify-content: center;
             padding: 10px;
             gap: 8px;
-            width:200px;
             background: rgba(200,200,200,0.1);
             border-radius: 5px;
             margin-top: 20px;
