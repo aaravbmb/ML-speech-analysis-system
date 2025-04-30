@@ -202,6 +202,9 @@ def analyze_page():
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, "recorded_audio.wav", scaler)
 
+                # Debugging print statements
+                print(f"Predicted Emotion: {emotion}")  # Check the emotion output
+
                 # Check if emotion is valid
                 if emotion and emotion in emoji_map:
                     detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
@@ -228,6 +231,9 @@ def analyze_page():
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, temp_file_path, scaler)
 
+                # Debugging print statements
+                print(f"Predicted Emotion: {emotion}")  # Check the emotion output
+
                 # Check if emotion is valid
                 if emotion and emotion in emoji_map:
                     detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
@@ -237,7 +243,6 @@ def analyze_page():
     if detected_emotion:
         st.subheader("Emotion Detection 🎉")
         st.success(detected_emotion)
-
 
 
 def project_details_page():
