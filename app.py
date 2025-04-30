@@ -217,7 +217,7 @@ def analyze_page():
         st.subheader("Emotion Detection 🎉")
         # Using HTML for better control over styling and adding a box with padding, color, etc.
         st.markdown(f"""
-        <div style="background-color: #F1C40F; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); width: 80%; margin: 0 auto; text-align: center;">
+        <div style="background-color: #0ff197; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); width: 80%; margin: 0 auto; text-align: center;">
             <h2 style="color: #2c3e50; font-size: 48px; font-weight: bold;">
                 {detected_emotion}
             </h2>
