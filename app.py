@@ -189,7 +189,7 @@ def analyze_page():
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, "recorded_audio.wav", scaler)  # Pass the scaler here
-                detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
+                detected_emotion = f"{emoji_map[emotion]} {emotion.capitalize()}"
 
     # Handle File Upload in col2
     with col2:
@@ -210,13 +210,19 @@ def analyze_page():
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, temp_file_path, scaler)  # Pass the scaler here
-                detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
+                detected_emotion = f"{emoji_map[emotion]} {emotion.capitalize()}"
 
-    # Display detected emotion with larger font
+    # Display detected emotion with a stylish box
     if detected_emotion:
         st.subheader("Emotion Detection 🎉")
-        # Using HTML for better control over styling
-        st.markdown(f"<h2 style='color: #2c3e50; font-size: 36px; font-weight: bold;'>{detected_emotion}</h2>", unsafe_allow_html=True)
+        # Using HTML for better control over styling and adding a box with padding, color, etc.
+        st.markdown(f"""
+        <div style="background-color: #F1C40F; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); width: 80%; margin: 0 auto; text-align: center;">
+            <h2 style="color: #2c3e50; font-size: 48px; font-weight: bold;">
+                {detected_emotion}
+            </h2>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 
