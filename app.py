@@ -213,8 +213,10 @@ def analyze_page():
                 detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
     if detected_emotion:
-        st.subheader("Emotion Detection 🎉")
-        st.success(detected_emotion)
+    st.subheader("Emotion Detection 🎉")
+    # Using HTML for better control over styling
+    st.markdown(f"<h2 style='color: #2c3e50; font-size: 36px; font-weight: bold;'>{detected_emotion}</h2>", unsafe_allow_html=True)
+
 
 
 def project_details_page():
