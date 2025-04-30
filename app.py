@@ -201,7 +201,12 @@ def analyze_page():
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, "recorded_audio.wav", scaler)
-                detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
+
+                # Check if emotion is valid
+                if emotion and emotion in emoji_map:
+                    detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
+                else:
+                    detected_emotion = "Could not detect emotion or invalid emotion detected."
 
     # Handle File Upload in col2
     with col2:
@@ -222,11 +227,17 @@ def analyze_page():
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
                 emotion = predict(model, temp_file_path, scaler)
-                detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
+
+                # Check if emotion is valid
+                if emotion and emotion in emoji_map:
+                    detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
+                else:
+                    detected_emotion = "Could not detect emotion or invalid emotion detected."
 
     if detected_emotion:
         st.subheader("Emotion Detection 🎉")
         st.success(detected_emotion)
+
 
 
 def project_details_page():
