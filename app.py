@@ -34,17 +34,17 @@ def predict(model, audio_file_path, scaler):
     features = extract_features(audio_data, sr)
 
     # Scale the features using the loaded scaler
-    features_scaled = scaler.transform(features)
+    features_scaled = scaler.transform(features)  # shape: (1, 40)
 
-    # ✅ Reshape features to match the model input
-    features_scaled = features_scaled.reshape(1, 40, 2)
+    # ✅ Reshape features to match the model input: (1, 40, 2)
+    features_scaled = np.expand_dims(features_scaled, axis=-1)  # (1, 40, 1)
+    features_scaled = np.repeat(features_scaled, 2, axis=-1)    # (1, 40, 2)
 
     # Predict the emotion using the trained model
     emotion = model.predict(features_scaled)
 
     # Map emotion index to label
     emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
-    
     predicted_emotion = emotion_labels[np.argmax(emotion)]
 
     return predicted_emotion
