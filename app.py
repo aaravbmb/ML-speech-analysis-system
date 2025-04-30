@@ -127,12 +127,11 @@ def sidebar_ui():
 import os
 import tempfile
 import speech_recognition as sr
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
 from io import BytesIO
 import streamlit as st
 from audiorecorder import audiorecorder
 import joblib  # Import joblib to load the scaler
+import tensorflow as tf  # Ensure TensorFlow is imported
 
 # Function to extract text from the recorded audio
 def extract_text_from_audio(audio_data):
@@ -149,11 +148,6 @@ def extract_text_from_audio(audio_data):
     except sr.RequestError:
         return "Speech recognition service is unavailable"
 
-# Function to generate a word cloud image with smaller size
-def generate_word_cloud(text):
-    wordcloud = WordCloud(width=600, height=300, background_color="white", max_words=150).generate(text)
-    return wordcloud
-
 # Load the model and scaler
 @st.cache_resource(show_spinner=False)
 def load_model():
@@ -165,8 +159,8 @@ def load_scaler():
 
 def analyze_page():
     model = load_model()
-    scaler = load_scaler()  # Load the scaler here
-    
+    scaler = load_scaler()
+
     st.subheader("Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis. 🎤")
 
     emoji_map = {
@@ -176,7 +170,6 @@ def analyze_page():
 
     col1, col2 = st.columns(2, border=True)
 
-    wordcloud = None  # Initialize wordcloud variable
     detected_emotion = ""
 
     # Handle Audio Recording in col1
@@ -192,13 +185,12 @@ def analyze_page():
             # Save the recorded audio
             audio.export("recorded_audio.wav", format="wav")
 
-            # Extract text from recorded audio and generate word cloud
+            # Extract text from recorded audio
             text = extract_text_from_audio("recorded_audio.wav")
-            wordcloud = generate_word_cloud(text)
 
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
-                emotion = predict(model, "recorded_audio.wav", scaler)  # Pass the scaler here
+                emotion = predict(model, "recorded_audio.wav", scaler)
                 detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
     # Handle File Upload in col2
@@ -214,25 +206,17 @@ def analyze_page():
                 temp_file.write(uploaded_file.getvalue())
                 temp_file_path = temp_file.name
 
-            # Extract text from uploaded file and generate word cloud
+            # Extract text from uploaded file
             text = extract_text_from_audio(temp_file_path)
-            wordcloud = generate_word_cloud(text)
 
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
-                emotion = predict(model, temp_file_path, scaler)  # Pass the scaler here
+                emotion = predict(model, temp_file_path, scaler)
                 detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
     if detected_emotion:
         st.subheader("Emotion Detection 🎉")
         st.success(detected_emotion)
-
-    if wordcloud:
-        st.subheader("📝 Word Cloud from Audio")
-        plt.figure(figsize=(6, 3)) 
-        plt.imshow(wordcloud, interpolation="bilinear")
-        plt.axis("off")
-        st.pyplot(plt)
 
 
 def project_details_page():
