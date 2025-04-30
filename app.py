@@ -24,31 +24,36 @@ def extract_features(audio_data, sr):
     # Return the features as a flattened array
     return mfccs_mean.reshape(1, -1)
 
+import librosa
+import numpy as np
+
+# Extract MFCC features from audio data
+def extract_features(audio_data, sr):
+    mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=40)
+    mfccs_mean = np.mean(mfccs, axis=1)
+    return mfccs_mean.reshape(1, -1)  # Shape: (1, 40)
+
 # Predict emotion from audio
-
 def predict(model, audio_file_path, scaler):
-    # Load the audio file
-    audio_data, sr = librosa.load(audio_file_path, sr=None)
+    # Load audio
+    audio_data, sr = librosa.load(audio_file_path, sr=22050)
 
-    # Extract features from the audio file
-    features = extract_features(audio_data, sr)
+    # Extract and scale features
+    features = extract_features(audio_data, sr)            # (1, 40)
+    features_scaled = scaler.transform(features)           # (1, 40)
 
-    # Scale the features using the loaded scaler
-    features_scaled = scaler.transform(features)
+    # Reshape for LSTM input: (batch_size, timesteps, features)
+    features_scaled = features_scaled.reshape(1, 1, 40)    # (1, 1, 40) for LSTM
 
-    # ✅ Reshape features to match the model input
-    features_scaled = features_scaled.reshape(1, 40, 1)
-
-    # Predict the emotion using the trained model
+    # Predict emotion
     emotion = model.predict(features_scaled)
 
-    # Map emotion index to label
+    # Map to label
     emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
-    
     predicted_emotion = emotion_labels[np.argmax(emotion)]
 
     return predicted_emotion
-
+    
 def sidebar_ui():
     st.markdown(
         """
