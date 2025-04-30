@@ -13,17 +13,14 @@ import joblib  # Import joblib to load the scaler
 def load_model():
     return tf.keras.models.load_model('emotionrecognition.h5')
 
+import librosa
+import numpy as np
+
 # Extract MFCC features from audio data
 def extract_features(audio_data, sr):
-    # Extract MFCC features from audio data
     mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=40)
-    
-    # Take the mean of the MFCCs for each coefficient across the frames
     mfccs_mean = np.mean(mfccs, axis=1)
-    
-    # Return the features as a flattened array
-    return mfccs_mean.reshape(1, -1)
-
+    return mfccs_mean.reshape(1, -1)  # Shape: (1, 40)
 
 # Predict emotion from audio
 def predict(model, audio_file_path, scaler):
@@ -34,8 +31,15 @@ def predict(model, audio_file_path, scaler):
     features = extract_features(audio_data, sr)            # (1, 40)
     features_scaled = scaler.transform(features)           # (1, 40)
 
+    # Print to debug shapes
+    print(f"features_scaled shape: {features_scaled.shape}")  # Should print (1, 40)
+
     # Reshape for LSTM input: (batch_size, timesteps, features)
     features_scaled = features_scaled.reshape(1, 1, 40)    # (1, 1, 40) for LSTM
+    print(f"features_scaled reshaped shape: {features_scaled.shape}")  # Should print (1, 1, 40)
+
+    # Check model input shape
+    print(f"Model input shape: {model.input_shape}")  # Check model's expected input shape
 
     # Predict emotion
     emotion = model.predict(features_scaled)
@@ -45,6 +49,7 @@ def predict(model, audio_file_path, scaler):
     predicted_emotion = emotion_labels[np.argmax(emotion)]
 
     return predicted_emotion
+
     
 def sidebar_ui():
     st.markdown(
