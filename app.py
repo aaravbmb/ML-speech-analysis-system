@@ -35,6 +35,7 @@ def predict(model, audio_file_path, scaler):
 
     # Scale the features using the loaded scaler
     features_scaled = scaler.transform(features)
+    print(f"Shape of features_scaled: {features_scaled.shape}")
 
     # ✅ Reshape features to match the model input
     features_scaled = features_scaled.reshape(1, 40, 1)
