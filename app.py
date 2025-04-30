@@ -13,49 +13,41 @@ import joblib  # Import joblib to load the scaler
 def load_model():
     return tf.keras.models.load_model('emotionrecognition.h5')
 
-def extract_features(file_path):
-    # Load audio file with librosa (returns audio data and sample rate)
-    audio_data, sr = librosa.load(file_path, sr=None)
-    
-    print(f"Audio Data Shape: {audio_data.shape}")  # Debugging line to check audio shape
-    
+# Extract MFCC features from audio data
+def extract_features(audio_data, sr):
     # Extract MFCC features from audio data
     mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=40)
-    print(f"MFCCs Shape: {mfccs.shape}")  # Debugging line to check MFCCs shape
     
     # Take the mean of the MFCCs for each coefficient across the frames
     mfccs_mean = np.mean(mfccs, axis=1)
-    
-    print(f"MFCCs Mean Shape: {mfccs_mean.shape}")  # Debugging line to check the mean shape
     
     # Return the features as a flattened array
     return mfccs_mean.reshape(1, -1)
 
 # Predict emotion from audio
 
-def predict(model, file_path, scaler):
-    # Extract features
-    features = extract_features(file_path)
-    print(f"Extracted Features: {features}")  # Print features to verify
+def predict(model, audio_file_path, scaler):
+    # Load the audio file
+    audio_data, sr = librosa.load(audio_file_path, sr=None)
 
-    # Scale features
+    # Extract features from the audio file
+    features = extract_features(audio_data, sr)
+
+    # Scale the features using the loaded scaler
     features_scaled = scaler.transform(features)
-    features_scaled = features_scaled.reshape(1, 40, 1)  # Ensure correct shape
-    print(f"Scaled Features: {features_scaled}")  # Print scaled features to verify
 
-    # Make prediction
-    predictions = model.predict(features_scaled)
-    print(f"Model Predictions: {predictions}")  # Print predictions to verify
+    # ✅ Reshape features to match the model input
+    features_scaled = features_scaled.reshape(1, 40, 1)
 
-    # Get predicted class (assuming max index is the predicted class)
-    predicted_class = predictions.argmax(axis=-1)[0]
-    emotion = emotion_labels[predicted_class]
+    # Predict the emotion using the trained model
+    emotion = model.predict(features_scaled)
 
-    print(f"Predicted Class: {predicted_class}, Emotion: {emotion}")  # Print emotion
-    return emotion
+    # Map emotion index to label
+    emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
+    
+    predicted_emotion = emotion_labels[np.argmax(emotion)]
 
-
-
+    return predicted_emotion
     
 def sidebar_ui():
     st.markdown(
@@ -135,11 +127,12 @@ def sidebar_ui():
 import os
 import tempfile
 import speech_recognition as sr
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 from io import BytesIO
 import streamlit as st
 from audiorecorder import audiorecorder
 import joblib  # Import joblib to load the scaler
-import tensorflow as tf  # Ensure TensorFlow is imported
 
 # Function to extract text from the recorded audio
 def extract_text_from_audio(audio_data):
@@ -156,6 +149,11 @@ def extract_text_from_audio(audio_data):
     except sr.RequestError:
         return "Speech recognition service is unavailable"
 
+# Function to generate a word cloud image with smaller size
+def generate_word_cloud(text):
+    wordcloud = WordCloud(width=600, height=300, background_color="white", max_words=150).generate(text)
+    return wordcloud
+
 # Load the model and scaler
 @st.cache_resource(show_spinner=False)
 def load_model():
@@ -167,9 +165,9 @@ def load_scaler():
 
 def analyze_page():
     model = load_model()
-    scaler = load_scaler()
-
-    st.subheader("Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis. 🎤")
+    scaler = load_scaler()  # Load the scaler here
+    
+    st.subheader("🎤 Analyze your speech for the most comprehensive emotion, sentiment and thematic analysis.")
 
     emoji_map = {
         'neutral': '😐', 'calm': '😌', 'happy': '😄', 'sad': '😢',
@@ -178,6 +176,7 @@ def analyze_page():
 
     col1, col2 = st.columns(2, border=True)
 
+    wordcloud = None  # Initialize wordcloud variable
     detected_emotion = ""
 
     # Handle Audio Recording in col1
@@ -193,21 +192,14 @@ def analyze_page():
             # Save the recorded audio
             audio.export("recorded_audio.wav", format="wav")
 
-            # Extract text from recorded audio
+            # Extract text from recorded audio and generate word cloud
             text = extract_text_from_audio("recorded_audio.wav")
+            wordcloud = generate_word_cloud(text)
 
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
-                emotion = predict(model, "recorded_audio.wav", scaler)
-
-                # Debugging print statements
-                print(f"Predicted Emotion: {emotion}")  # Check the emotion output
-
-                # Check if emotion is valid
-                if emotion and emotion in emoji_map:
-                    detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
-                else:
-                    detected_emotion = "Could not detect emotion or invalid emotion detected."
+                emotion = predict(model, "recorded_audio.wav", scaler)  # Pass the scaler here
+                detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
     # Handle File Upload in col2
     with col2:
@@ -222,25 +214,25 @@ def analyze_page():
                 temp_file.write(uploaded_file.getvalue())
                 temp_file_path = temp_file.name
 
-            # Extract text from uploaded file
+            # Extract text from uploaded file and generate word cloud
             text = extract_text_from_audio(temp_file_path)
+            wordcloud = generate_word_cloud(text)
 
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
-                emotion = predict(model, temp_file_path, scaler)
-
-                # Debugging print statements
-                print(f"Predicted Emotion: {emotion}")  # Check the emotion output
-
-                # Check if emotion is valid
-                if emotion and emotion in emoji_map:
-                    detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
-                else:
-                    detected_emotion = "Could not detect emotion or invalid emotion detected."
+                emotion = predict(model, temp_file_path, scaler)  # Pass the scaler here
+                detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
     if detected_emotion:
         st.subheader("Emotion Detection 🎉")
         st.success(detected_emotion)
+
+    if wordcloud:
+        st.subheader("📝 Word Cloud from Audio")
+        plt.figure(figsize=(6, 3)) 
+        plt.imshow(wordcloud, interpolation="bilinear")
+        plt.axis("off")
+        st.pyplot(plt)
 
 
 def project_details_page():
