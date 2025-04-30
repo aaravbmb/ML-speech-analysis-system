@@ -16,6 +16,9 @@ def load_model():
 import librosa
 import numpy as np
 
+import librosa
+import numpy as np
+
 # Extract MFCC features from audio data
 def extract_features(audio_data, sr):
     mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=40)
@@ -31,15 +34,8 @@ def predict(model, audio_file_path, scaler):
     features = extract_features(audio_data, sr)            # (1, 40)
     features_scaled = scaler.transform(features)           # (1, 40)
 
-    # Print to debug shapes
-    print(f"features_scaled shape: {features_scaled.shape}")  # Should print (1, 40)
-
     # Reshape for LSTM input: (batch_size, timesteps, features)
     features_scaled = features_scaled.reshape(1, 1, 40)    # (1, 1, 40) for LSTM
-    print(f"features_scaled reshaped shape: {features_scaled.shape}")  # Should print (1, 1, 40)
-
-    # Check model input shape
-    print(f"Model input shape: {model.input_shape}")  # Check model's expected input shape
 
     # Predict emotion
     emotion = model.predict(features_scaled)
