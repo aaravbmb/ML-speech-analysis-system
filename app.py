@@ -13,13 +13,20 @@ import joblib  # Import joblib to load the scaler
 def load_model():
     return tf.keras.models.load_model('emotionrecognition.h5')
 
-# Extract MFCC features from audio data
-def extract_features(audio_data, sr):
+def extract_features(file_path):
+    # Load audio file with librosa (returns audio data and sample rate)
+    audio_data, sr = librosa.load(file_path, sr=None)
+    
+    print(f"Audio Data Shape: {audio_data.shape}")  # Debugging line to check audio shape
+    
     # Extract MFCC features from audio data
     mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=40)
+    print(f"MFCCs Shape: {mfccs.shape}")  # Debugging line to check MFCCs shape
     
     # Take the mean of the MFCCs for each coefficient across the frames
     mfccs_mean = np.mean(mfccs, axis=1)
+    
+    print(f"MFCCs Mean Shape: {mfccs_mean.shape}")  # Debugging line to check the mean shape
     
     # Return the features as a flattened array
     return mfccs_mean.reshape(1, -1)
