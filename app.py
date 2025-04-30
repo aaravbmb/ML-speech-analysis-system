@@ -37,7 +37,7 @@ def predict(model, audio_file_path, scaler):
     features_scaled = scaler.transform(features)
 
     # ✅ Reshape features to match the model input
-    features_scaled = features_scaled.reshape(1, 40, 1)
+    features_scaled = features_scaled.reshape(1, 40, 2)
 
     # Predict the emotion using the trained model
     emotion = model.predict(features_scaled)
