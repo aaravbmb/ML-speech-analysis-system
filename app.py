@@ -212,10 +212,12 @@ def analyze_page():
                 emotion = predict(model, temp_file_path, scaler)  # Pass the scaler here
                 detected_emotion = f"**Detected Emotion:** {emoji_map[emotion]} {emotion.capitalize()}"
 
+    # Display detected emotion with larger font
     if detected_emotion:
-    st.subheader("Emotion Detection 🎉")
-    # Using HTML for better control over styling
-    st.markdown(f"<h2 style='color: #2c3e50; font-size: 36px; font-weight: bold;'>{detected_emotion}</h2>", unsafe_allow_html=True)
+        st.subheader("Emotion Detection 🎉")
+        # Using HTML for better control over styling
+        st.markdown(f"<h2 style='color: #2c3e50; font-size: 36px; font-weight: bold;'>{detected_emotion}</h2>", unsafe_allow_html=True)
+
 
 
 
