@@ -27,28 +27,36 @@ def extract_features(audio_data, sr):
 # Predict emotion from audio
 
 def predict(model, audio_file_path, scaler):
-    # Load the audio file
-    audio_data, sr = librosa.load(audio_file_path, sr=None)
+    try:
+        # Load the audio file
+        audio_data, sr = librosa.load(audio_file_path, sr=None)
+        print(f"Audio data loaded: {audio_data.shape}")
 
-    # Extract features from the audio file
-    features = extract_features(audio_data, sr)
+        # Extract features from the audio file
+        features = extract_features(audio_data, sr)
+        print(f"Features extracted: {features.shape}")
 
-    # Scale the features using the loaded scaler
-    features_scaled = scaler.transform(features)
-    print(f"Shape of features_scaled: {features_scaled.shape}")
+        # Scale the features using the loaded scaler
+        features_scaled = scaler.transform(features)
+        print(f"Shape of features_scaled (after scaling): {features_scaled.shape}")
 
-    # ✅ Reshape features to match the model input
-    features_scaled = features_scaled.reshape(1, 40, 1)
+        # ✅ Reshape features to match the model input
+        features_scaled = features_scaled.reshape(1, 40, 1)
+        print(f"Shape of features_scaled (after reshaping): {features_scaled.shape}")
 
-    # Predict the emotion using the trained model
-    emotion = model.predict(features_scaled)
+        # Predict the emotion using the trained model
+        emotion = model.predict(features_scaled)
+        print(f"Model prediction: {emotion}")
 
-    # Map emotion index to label
-    emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
-    
-    predicted_emotion = emotion_labels[np.argmax(emotion)]
+        # Map emotion index to label
+        emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
+        predicted_emotion = emotion_labels[np.argmax(emotion)]
+        return predicted_emotion
 
-    return predicted_emotion
+    except Exception as e:
+        print(f"Error in predict function: {e}")
+        return None
+
 
     
 def sidebar_ui():
