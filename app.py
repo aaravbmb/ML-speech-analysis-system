@@ -13,35 +13,38 @@ import joblib  # Import joblib to load the scaler
 def load_model():
     return tf.keras.models.load_model('emotionrecognition.h5')
 
-import librosa
-import numpy as np
-
-import librosa
-import numpy as np
-
 # Extract MFCC features from audio data
 def extract_features(audio_data, sr):
+    # Extract MFCC features from audio data
     mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=40)
+    
+    # Take the mean of the MFCCs for each coefficient across the frames
     mfccs_mean = np.mean(mfccs, axis=1)
-    return mfccs_mean.reshape(1, -1)  # Shape: (1, 40)
+    
+    # Return the features as a flattened array
+    return mfccs_mean.reshape(1, -1)
 
 # Predict emotion from audio
+
 def predict(model, audio_file_path, scaler):
-    # Load audio
-    audio_data, sr = librosa.load(audio_file_path, sr=22050)
+    # Load the audio file
+    audio_data, sr = librosa.load(audio_file_path, sr=None)
 
-    # Extract and scale features
-    features = extract_features(audio_data, sr)            # (1, 40)
-    features_scaled = scaler.transform(features)           # (1, 40)
+    # Extract features from the audio file
+    features = extract_features(audio_data, sr)
 
-    # Reshape for LSTM input: (batch_size, timesteps, features)
-    features_scaled = features_scaled.reshape(1, 1, 40)    # (1, 1, 40) for LSTM
+    # Scale the features using the loaded scaler
+    features_scaled = scaler.transform(features)
 
-    # Predict emotion
+    # ✅ Reshape features to match the model input
+    features_scaled = features_scaled.reshape(1, 40, 1)
+
+    # Predict the emotion using the trained model
     emotion = model.predict(features_scaled)
 
-    # Map to label
+    # Map emotion index to label
     emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
+    
     predicted_emotion = emotion_labels[np.argmax(emotion)]
 
     return predicted_emotion
