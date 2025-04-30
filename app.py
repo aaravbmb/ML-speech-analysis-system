@@ -127,9 +127,6 @@ def sidebar_ui():
 import os
 import tempfile
 import speech_recognition as sr
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
-from io import BytesIO
 import streamlit as st
 from audiorecorder import audiorecorder
 import joblib  # Import joblib to load the scaler
@@ -148,11 +145,6 @@ def extract_text_from_audio(audio_data):
         return "Could not understand the audio"
     except sr.RequestError:
         return "Speech recognition service is unavailable"
-
-# Function to generate a word cloud image with smaller size
-def generate_word_cloud(text):
-    wordcloud = WordCloud(width=600, height=300, background_color="white", max_words=150).generate(text)
-    return wordcloud
 
 # Load the model and scaler
 @st.cache_resource(show_spinner=False)
@@ -176,7 +168,6 @@ def analyze_page():
 
     col1, col2 = st.columns(2, border=True)
 
-    wordcloud = None  # Initialize wordcloud variable
     detected_emotion = ""
 
     # Handle Audio Recording in col1
@@ -192,9 +183,8 @@ def analyze_page():
             # Save the recorded audio
             audio.export("recorded_audio.wav", format="wav")
 
-            # Extract text from recorded audio and generate word cloud
+            # Extract text from recorded audio
             text = extract_text_from_audio("recorded_audio.wav")
-            wordcloud = generate_word_cloud(text)
 
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
@@ -214,9 +204,8 @@ def analyze_page():
                 temp_file.write(uploaded_file.getvalue())
                 temp_file_path = temp_file.name
 
-            # Extract text from uploaded file and generate word cloud
+            # Extract text from uploaded file
             text = extract_text_from_audio(temp_file_path)
-            wordcloud = generate_word_cloud(text)
 
             # Emotion analysis
             with st.spinner("Analyzing emotion..."):
@@ -226,13 +215,6 @@ def analyze_page():
     if detected_emotion:
         st.subheader("Emotion Detection 🎉")
         st.success(detected_emotion)
-
-    if wordcloud:
-        st.subheader("📝 Word Cloud from Audio")
-        plt.figure(figsize=(6, 3)) 
-        plt.imshow(wordcloud, interpolation="bilinear")
-        plt.axis("off")
-        st.pyplot(plt)
 
 
 def project_details_page():
