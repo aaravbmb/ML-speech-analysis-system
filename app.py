@@ -8,25 +8,10 @@ from io import BytesIO
 from sklearn.preprocessing import StandardScaler
 import joblib  # Import joblib to load the scaler
 
+# Load the model once
 @st.cache_resource(show_spinner=False)
 def load_model():
-    try:
-        model = tf.keras.models.load_model('emotionrecognition.h5')
-        print("Model loaded successfully")
-        return model
-    except Exception as e:
-        print(f"Error loading model: {e}")
-        st.error(f"Error loading model: {e}")
-
-@st.cache_resource(show_spinner=False)
-def load_scaler():
-    try:
-        scaler = joblib.load('scaler.pkl')
-        print("Scaler loaded successfully")
-        return scaler
-    except Exception as e:
-        print(f"Error loading scaler: {e}")
-        st.error(f"Error loading scaler: {e}")
+    return tf.keras.models.load_model('emotionrecognition.h5')
 
 # Extract MFCC features from audio data
 def extract_features(audio_data, sr):
