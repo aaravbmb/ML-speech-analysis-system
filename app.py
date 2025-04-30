@@ -24,14 +24,6 @@ def extract_features(audio_data, sr):
     # Return the features as a flattened array
     return mfccs_mean.reshape(1, -1)
 
-import librosa
-import numpy as np
-
-# Extract MFCC features from audio data
-def extract_features(audio_data, sr):
-    mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=40)
-    mfccs_mean = np.mean(mfccs, axis=1)
-    return mfccs_mean.reshape(1, -1)  # Shape: (1, 40)
 
 # Predict emotion from audio
 def predict(model, audio_file_path, scaler):
