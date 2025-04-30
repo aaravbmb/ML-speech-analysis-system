@@ -26,36 +26,27 @@ def extract_features(audio_data, sr):
 
 # Predict emotion from audio
 
-def predict(model, audio_file_path, scaler):
-    try:
-        # Load the audio file
-        audio_data, sr = librosa.load(audio_file_path, sr=None)
-        print(f"Audio data loaded: {audio_data.shape}")
+def predict(model, file_path, scaler):
+    # Extract features
+    features = extract_features(file_path)
+    print(f"Extracted Features: {features}")  # Print features to verify
 
-        # Extract features from the audio file
-        features = extract_features(audio_data, sr)
-        print(f"Features extracted: {features.shape}")
+    # Scale features
+    features_scaled = scaler.transform(features)
+    features_scaled = features_scaled.reshape(1, 40, 1)  # Ensure correct shape
+    print(f"Scaled Features: {features_scaled}")  # Print scaled features to verify
 
-        # Scale the features using the loaded scaler
-        features_scaled = scaler.transform(features)
-        print(f"Shape of features_scaled (after scaling): {features_scaled.shape}")
+    # Make prediction
+    predictions = model.predict(features_scaled)
+    print(f"Model Predictions: {predictions}")  # Print predictions to verify
 
-        # ✅ Reshape features to match the model input
-        features_scaled = features_scaled.reshape(1, 40, 1)
-        print(f"Shape of features_scaled (after reshaping): {features_scaled.shape}")
+    # Get predicted class (assuming max index is the predicted class)
+    predicted_class = predictions.argmax(axis=-1)[0]
+    emotion = emotion_labels[predicted_class]
 
-        # Predict the emotion using the trained model
-        emotion = model.predict(features_scaled)
-        print(f"Model prediction: {emotion}")
+    print(f"Predicted Class: {predicted_class}, Emotion: {emotion}")  # Print emotion
+    return emotion
 
-        # Map emotion index to label
-        emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
-        predicted_emotion = emotion_labels[np.argmax(emotion)]
-        return predicted_emotion
-
-    except Exception as e:
-        print(f"Error in predict function: {e}")
-        return None
 
 
     
