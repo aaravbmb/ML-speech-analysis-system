@@ -87,7 +87,7 @@ def analyze_page():
     emoji_map = {'neutral': '😐', 'calm': '😌', 'happy': '😄', 'sad': '😢',
                  'angry': '😡', 'fearful': '😨', 'disgust': '🤢', 'surprised': '😲'}
 
-    col0=st.columns(1,border=True)
+    col0=st.columns(1,border=True)[0]
     with col0:
         transcription_engine = st.radio(
             "Choose Transcription Engine:",
