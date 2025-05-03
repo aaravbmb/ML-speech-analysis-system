@@ -222,10 +222,10 @@ def analyze_page():
         </div>
         """, unsafe_allow_html=True)
         
-        st.subheader("Transcribed Text 📝")
+        st.text("Transcribed Text 📝")
         st.markdown(f"""
         <div style="background-color: #f7f7f7; padding: 15px; border-radius: 8px; box-shadow: inset 0 0 5px rgba(0,0,0,0.1); margin-top: 10px;">
-            <p style="font-size: 16px; font-family: 'Courier New', monospace; color: #333;">{text}</p>
+            <p style="font-size: 16px; color: #555555;">{text}</p>
         </div>
         """, unsafe_allow_html=True)
 
