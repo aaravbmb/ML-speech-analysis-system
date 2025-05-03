@@ -268,7 +268,7 @@ def about_us_page():
                     <p class="card-subtitle">Consultant at Great Learning</p>
                 </div>
             </div>
-            <a class="linkedin-icon" href="https://www.linkedin.com/in/devangi-bedi" target="_blank">
+            <a class="linkedin-icon" href="https://www.linkedin.com/in/devangi-bedi-408105227/" target="_blank">
                 <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
             </a>
         </div>
@@ -284,7 +284,7 @@ def about_us_page():
                     <p class="card-subtitle">Machine Learning Engineer</p>
                 </div>
             </div>
-            <a class="linkedin-icon" href="https://www.linkedin.com/in/devangi-bedi" target="_blank">
+            <a class="linkedin-icon" href="https://www.linkedin.com/in/akshita-panwar-3b2398267/" target="_blank">
                 <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
             </a>
         </div>
@@ -302,7 +302,7 @@ def about_us_page():
                     <p class="card-subtitle">Product Analyst at XEBO.ai</p>
                 </div>
             </div>
-            <a class="linkedin-icon" href="https://www.linkedin.com/in/devangi-bedi" target="_blank">
+            <a class="linkedin-icon" href="https://www.linkedin.com/in/aaravbamba/" target="_blank">
                 <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
             </a>
         </div>
