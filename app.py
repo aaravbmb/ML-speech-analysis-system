@@ -90,9 +90,12 @@ def analyze_page():
     col0=st.columns(1,border=True)[0]
     with col0:
         transcription_engine = st.radio(
-            options=["Custom Model", "OpenAI Whisper"],
+            "Select an emotion model:"
+            options=["Custom Model", "Whisper"],
+            captions=["LSTM Model made using Tensorflow","OpenAI's audio analysis model."]
             index=0,
-            horizontal=True
+            horizontal=True,
+            label_visibility="hidden"
         )
         transcription_engine = "custommodel" if transcription_engine == "Custom Model" else "openaiwhisper"
         st.caption(f"Selected transcription engine: {transcription_engine}")
