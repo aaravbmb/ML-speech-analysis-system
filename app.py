@@ -215,7 +215,7 @@ def analyze_page():
     # Display detected emotion with a stylish box
     if detected_emotion:
         st.markdown(f"""
-        <div style="padding: 20px; border-radius: 10px; border-color: yellow; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); width: 100%; margin: 0 auto; text-align: center;">
+        <div style="padding: 20px; border-radius: 10px; border-style: solid; border-color: yellow; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); width: 100%; margin: 0 auto; text-align: center;">
             <h2 style="color: #2c3e50; font-size: 36px; font-weight: bold;">
                 Emotion Detected: {detected_emotion}
             </h2>
