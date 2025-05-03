@@ -87,18 +87,19 @@ def analyze_page():
     emoji_map = {'neutral': '😐', 'calm': '😌', 'happy': '😄', 'sad': '😢',
                  'angry': '😡', 'fearful': '😨', 'disgust': '🤢', 'surprised': '😲'}
 
+    col0=st.columns(1,border=True)
+    with col0:
+        transcription_engine = st.radio(
+            "Choose Transcription Engine:",
+            options=["Custom Model", "OpenAI Whisper"],
+            index=0,
+            horizontal=True
+        )
+        transcription_engine = "custommodel" if transcription_engine == "Custom Model" else "openaiwhisper"
+        st.write(f"Selected transcription engine: {transcription_engine}")
+
     col1, col2 = st.columns(2, border=True)
     detected_emotion, text = "", ""
-
-    transcription_engine = st.radio(
-        "Choose Transcription Engine:",
-        options=["Custom Model", "OpenAI Whisper"],
-        index=0,
-        horizontal=True
-    )
-
-    transcription_engine = "custommodel" if transcription_engine == "Custom Model" else "openaiwhisper"
-    st.write(f"Selected transcription engine: {transcription_engine}")
 
     with col1:
         st.markdown("#### 🎙️ Record Audio")
