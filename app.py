@@ -94,7 +94,7 @@ def analyze_page():
             options=["Custom Model", "Whisper"],
             index=0,
             horizontal=True,
-            label_visibility="hidden"
+            label_visibility="collapsed"
         )
         transcription_engine = "custommodel" if transcription_engine == "Custom Model" else "openaiwhisper"
         st.caption(f"Selected transcription engine: {transcription_engine}")
