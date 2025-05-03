@@ -92,7 +92,6 @@ def analyze_page():
         transcription_engine = st.radio(
             "Select an emotion model:",
             options=["Custom Model", "Whisper"],
-            captions=["LSTM Model made using Tensorflow","OpenAI's audio analysis model."],
             index=0,
             horizontal=True,
             label_visibility="hidden"
