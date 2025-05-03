@@ -90,13 +90,12 @@ def analyze_page():
     col0=st.columns(1,border=True)[0]
     with col0:
         transcription_engine = st.radio(
-            "Choose Transcription Engine:",
             options=["Custom Model", "OpenAI Whisper"],
             index=0,
             horizontal=True
         )
         transcription_engine = "custommodel" if transcription_engine == "Custom Model" else "openaiwhisper"
-        st.write(f"Selected transcription engine: {transcription_engine}")
+        st.caption(f"Selected transcription engine: {transcription_engine}")
 
     col1, col2 = st.columns(2, border=True)
     detected_emotion, text = "", ""
