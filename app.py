@@ -90,7 +90,7 @@ def analyze_page():
     col0=st.columns(1,border=True)[0]
     with col0:
         transcription_engine = st.radio(
-            "Select an emotion model:"
+            label="Select an emotion model:"
             options=["Custom Model", "Whisper"],
             captions=["LSTM Model made using Tensorflow","OpenAI's audio analysis model."]
             index=0,
