@@ -37,9 +37,6 @@ import soundfile as sf
 
 def predict(model, audio_file_path, scaler):
     audio_data, sr = librosa.load(audio_file_path, sr=None)
-
-    st.markdown("Original Audio")
-    st.audio(audio_file_path, format="audio/wav")
     audio_data = preprocess_audio_to_3s(audio_data, sr)
     print("Processed audio duration (s):", len(audio_data) / sr)
     features = extract_features(audio_data, sr)
