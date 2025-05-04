@@ -37,11 +37,14 @@ import soundfile as sf
 
 def predict(model, audio_file_path, scaler):
     audio_data, sr = librosa.load(audio_file_path, sr=None)
+    st.markdown("Original Audio")
+    st.audio(audio_file_path, format="audio/wav")
     audio_data = preprocess_audio_to_3s(audio_data, sr)
     print("Processed audio duration (s):", len(audio_data) / sr)
     temp_audio = BytesIO()
     sf.write(temp_audio, audio_data, sr, format='WAV')
     temp_audio.seek(0)
+    st.markdown("Processed Audio (3 seconds)")
     st.audio(temp_audio, format="audio/wav")
     features = extract_features(audio_data, sr)
     features_scaled = scaler.transform(features)
@@ -50,6 +53,7 @@ def predict(model, audio_file_path, scaler):
     emotion = model.predict(features_scaled)
     emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
     return emotion_labels[np.argmax(emotion)]
+
 
 def extract_text_from_audio(audio_data):
     recognizer = sr.Recognizer()
