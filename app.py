@@ -22,15 +22,28 @@ def extract_features(audio_data, sr):
     mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=40)
     return np.mean(mfccs, axis=1).reshape(1, -1)
 
+def preprocess_audio_to_3s(audio_data, sr, duration=3):
+    desired_length = sr * duration
+    if len(audio_data) > desired_length:
+        start = (len(audio_data) - desired_length) // 2
+        audio_data = audio_data[start:start + desired_length]
+    elif len(audio_data) < desired_length:
+        # Pad with zeros at the end
+        padding = desired_length - len(audio_data)
+        audio_data = np.pad(audio_data, (0, padding), mode='constant')
+    return audio_data
+
 def predict(model, audio_file_path, scaler):
     audio_data, sr = librosa.load(audio_file_path, sr=None)
+    audio_data = preprocess_audio_to_3s(audio_data, sr)
     features = extract_features(audio_data, sr)
     features_scaled = scaler.transform(features)
     features_scaled = np.expand_dims(features_scaled, axis=-1)
-    features_scaled = np.repeat(features_scaled, 2, axis=-1)
+    features_scaled = np.repeat(features_scaled, 2, axis=-1)  # if model expects 2 channels
     emotion = model.predict(features_scaled)
     emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
     return emotion_labels[np.argmax(emotion)]
+
 
 def extract_text_from_audio(audio_data):
     recognizer = sr.Recognizer()
