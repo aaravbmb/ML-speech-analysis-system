@@ -42,7 +42,7 @@ def predict(model, audio_file_path, scaler):
     features = extract_features(audio_data, sr)
     features_scaled = scaler.transform(features)
     features_scaled = np.expand_dims(features_scaled, axis=-1)
-    features_scaled = np.repeat(features_scaled, 2, axis=-1)  # if model expects 2 channels
+    features_scaled = np.repeat(features_scaled, 2, axis=-1)
     emotion = model.predict(features_scaled)
     emotion_labels = ['neutral', 'calm', 'happy', 'sad', 'angry', 'fearful', 'disgust', 'surprised']
     return emotion_labels[np.argmax(emotion)]
